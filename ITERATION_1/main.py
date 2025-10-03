@@ -1,3 +1,22 @@
 from utils.route_parser import Route_parser
 
-parser = Route_parser(False, "../data/eu_rail_network.csv")
+default_path = None
+
+while True:
+    default_input = input("Do you want to\n   1) Use our default CSV file\n   2) Select a CSV file\n")
+    try:
+        default_input = int(default_input)
+        if default_input == 1:
+            default_path = True
+            break
+        elif default_input == 2:
+            default_path = False
+            break
+        else:
+            print("\nPlease select between 1 and 2.\n")
+    except:
+        print("\nPlease input a numeric value.\n")
+
+parser = Route_parser(default_path)
+for y in parser.routes:
+    print(y.departure_city)
