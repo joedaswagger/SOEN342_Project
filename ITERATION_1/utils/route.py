@@ -9,3 +9,10 @@ class Route:
         self.days_of_operation = days_of_operation
         self.first_class_rate = first_class_rate
         self.second_class_rate = second_class_rate
+        self.trip_duration = None
+
+        self.calculate_duration()
+
+    # TO-DO: calculate duration from start to end of the trip
+    def calculate_duration(self):
+        return 0

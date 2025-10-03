@@ -1,4 +1,5 @@
 from utils.route_parser import Route_parser
+from utils.trip_planner import Trip_planner
 
 default_path = None
 
@@ -18,5 +19,4 @@ while True:
         print("\nPlease input a numeric value.\n")
 
 parser = Route_parser(default_path)
-for y in parser.routes:
-    print(y.departure_city)
+manager = Trip_planner(parser.routes)
