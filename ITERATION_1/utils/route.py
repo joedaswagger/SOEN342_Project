@@ -11,8 +11,19 @@ class Route:
         self.second_class_rate = second_class_rate
         self.trip_duration = None
 
-        self.calculate_duration()
+        
 
     # TO-DO: calculate duration from start to end of the trip
-    def calculate_duration(self):
-        return 0
+    def calculate_duration(depTime, arrTime):
+        dep = depTime.split(':')
+        arr = arrTime.split(':')
+
+        
+
+        hour = int(arr[0]) - int(dep[0])
+        arr = arr[1].split(' (')
+        minute = abs(int(arr[0]) - int(dep[1]))
+
+        
+
+        return str(hour) + " hours and " + str(minute) + " minutes"

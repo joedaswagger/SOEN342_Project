@@ -31,7 +31,7 @@ class Trip_planner:
                     if (variables[option] == second_input):
                         for i in range(1, len(list(variables.values()))):
                             if (list(variables.values())[i] == None): 
-                                print(display[i-1] + ": " + "None\n")
+                                print(display[i-1] + ": " + Route.calculate_duration(list(variables.values())[3], list(variables.values())[4]) + "\n")
                             elif i == 1:
                                 counter += 1
                                 print(str(counter) + ". " + display[i-1] + ": " + list(variables.values())[i], end = ", ")
