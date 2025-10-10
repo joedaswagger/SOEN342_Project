@@ -6,13 +6,12 @@ class Trip_planner:
         self.routes = routes
         self.search_results = []
         self.counter = 5
-        self.search()
 
     def search(self):
-        
         while True:
-            options = {1: "departure_city", 2: "arrival_city", 3: "departure_time", 4: "arrival_time", 5: "train_type", 6: "days_of_operation", 7: "first_class_rate", 8: "second_class_rate"}
-            first_input = input("\nSelect which criteria you wish to use to find your route: \n" \
+            self.search_results = []
+
+            search_parameter = input("\nWhich parameter would you like to use for trip search: \n" \
             "1. Departure City\n" \
             "2. Arrival City\n" \
             "3. Departure Time\n" \
@@ -21,30 +20,125 @@ class Trip_planner:
             "6. Days of Operation\n" \
             "7. First Class ticket rate (in euro)\n" \
             "8. Second class ticket rate (in euro)\n"
-            "9. Exit\n")
+            "9. Cancel\n")
 
-            if (0 < int(first_input) < 9):
-                print("\nNOTE: If searching days of operation, please do not input 'Mon' or 'Tue', simply type out the full days you wish to find. For daily trains, simply type 'Daily'.")
-                second_input = input("Search here: ")
-                print("Results: \n")
-                Trip_planner.counter = 0
-                for line in self.routes:
-                    variables = vars(line)
-                    option = options[int(first_input)]
-                    if (int(first_input) == 6):
-                        self.dayParser(variables, second_input)
-                        daySearch = True
-                    elif (variables[option].lower() == second_input.lower()):
-                        self.printResults(variables)
-                if (Trip_planner.counter == 0 and daySearch != True):
-                    print("No results found\n")
+            try:
+                match int(search_parameter):
+                    case 1:
+                        input_city = input("\nCity name: ")
+                        for route in self.routes:
+                            if route.departure_city.lower().strip() == input_city.lower().strip():
+                                self.search_results.append(route)
+                    case 2:
+                        input_city = input("\nCity name: ")
+                        for route in self.routes:
+                            if route.arrival_city.lower().strip() == input_city.lower().strip():
+                                self.search_results.append(route)
+                    case 3:
+                        while True:
+                            time_input = input("\nEnter your preffered departure hour: ")
+                            try:
+                                if int(time_input) >= 24 or int(time_input) < 0:
+                                    print("\nPlease enter a time from 0h to 23h\n")
+                                else:
+                                    for route in self.routes:
+                                        if int(route.departure_time.split(":")[0]) == int(time_input):
+                                            self.search_results.append(route)
+                                    break
+                            except:
+                                print("\nPlease enter a numerical value\n")
+                    case 4:
+                        while True:
+                            time_input = input("\nEnter your preffered arrival hour: ")
+                            try:
+                                if int(time_input) >= 24 or int(time_input) < 0:
+                                    print("\nPlease enter a time from 0h to 23h\n")
+                                else:
+                                    for route in self.routes:
+                                        if int(route.arrival_time.split(":")[0]) == int(time_input):
+                                            self.search_results.append(route)
+                                    break
+                            except:
+                                print("\nPlease enter a numerical value\n")
+                    case 5:
+                        train_types = [
+                            "RJX", "ICE", "InterCity", "Frecciarossa", "RegioExpress", "EuroCity", "TGV", "Italo", "RE", "Nightjet", "Intercités", "Thalys", "Eurostar", "TER", "IC", "AVE", "Railjet"
+                        ]
 
-            elif (int(first_input) == 9):
-                break        
-            else: 
-                print("\nPlease select between 1 and 9.\n")
+                        while True:
+                            try:
+                                for i, t in enumerate(train_types, start=1):
+                                    print(f"{i}. {t}")
+                                print("\n ")
 
-    
+                                train_selection = int(input("\nSelect a train type by index: "))
+
+                                if train_selection < 1 or train_selection > 17:
+                                    print("\nPlease enter a value from 1 to 17\n")
+                                else:
+                                    for route in self.routes:
+                                        if route.train_type == train_types[train_selection]:
+                                            self.search_results.append(route)
+                                    break
+
+                            except ValueError:
+                                print("\nPlease enter a numerical value\n")
+                    case 6:
+                        days_of_operation = [
+                            "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+                        ]
+
+                        while True:
+                            try:
+                                for i, t in enumerate(days_of_operation, start=1):
+                                    print(f"{i}. {t}")
+                                print("\n ")
+
+                                day_seletion = int(input("\nSelect a travel day by index: "))
+
+                                if day_seletion < 1 or day_seletion > 7:
+                                    print("\nPlease enter a value from 1 to 7\n")
+                                else:
+                                    for route in self.routes:
+                                        if route.days_of_operation == days_of_operation[day_seletion]:
+                                            self.search_results.append(route)
+                                    break
+
+                            except ValueError:
+                                print("\nPlease enter a numerical value\n")
+                    case 7:
+                            minimum = input("\nEnter the smallest amount you're willing to spend: ")
+                            maximum = input("\nEnter the largest amount you're willing to spend: ")
+                            try:
+                                if float(maximum) < float(minimum):
+                                    print("\nThe largest amount must be equal or greater than the smallest amount.\n")
+                                else:
+                                    for route in self.routes:
+                                        if float(route.first_class_rate) >= float(minimum) and float(route.first_class_rate) <= float(maximum):
+                                            self.search_results.append(route)
+                                    break
+                            except:
+                                print("\nPlease enter a numerical value\n")
+                    case 8:
+                            minimum = input("\nEnter the smallest amount you're willing to spend: ")
+                            maximum = input("\nEnter the largest amount you're willing to spend: ")
+                            try:
+                                if float(maximum) < float(minimum):
+                                    print("\nThe largest amount must be equal or greater than the smallest amount.\n")
+                                else:
+                                    for route in self.routes:
+                                        if float(route.second_class_rate) >= float(minimum) and float(route.first_class_rate) <= float(maximum):
+                                            self.search_results.append(route)
+                                    break
+                            except:
+                                print("\nPlease enter a numerical value\n")
+                    case 9:
+                        print("\nReturning to main menu\n")
+                    case _:
+                        print("\nPlease select a number from 1 to 9\n")
+            except ValueError:
+                print("\nPlease enter a numerical selection\n")
+
     def printResults(self, variables):
         isLastParam = False
         for i in range(1, len(list(variables.values()))):
