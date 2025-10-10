@@ -1,13 +1,16 @@
 from utils.route import Route
 
 class Trip_planner:
+    display = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Train Type", "Days of Operation", "First-Class Rate", "Second-Class Rate", "Trip Duration"]
+    counter = 0
+
     def __init__(self, routes):
         self.routes = routes
         self.search()
 
     # TO-DO: search for routes using any parameter except ID
     def search(self):
-        display = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Train Type", "Days of Operation", "First-Class Rate", "Second-Class Rate", "Trip Duration"]
+        
         while True:
             options = {1: "departure_city", 2: "arrival_city", 3: "departure_time", 4: "arrival_time", 5: "train_type", 6: "days_of_operation", 7: "first_class_rate", 8: "second_class_rate"}
             first_input = input("Select which criteria you wish to use to find your route: \n" \
@@ -22,22 +25,26 @@ class Trip_planner:
             "9. Exit\n")
 
             if (0 < int(first_input) < 9):
+                print("\nNOTE: If searching days of operation, please do not input 'Mon' or 'Tue', simply type out the full days you wish to find.")
                 second_input = input("Search here: ")
                 print("Results: \n")
-                counter = 0
+                Trip_planner.counter = 0
                 for line in self.routes:
                     variables = vars(line)
                     option = options[int(first_input)]
-                    if (variables[option] == second_input):
+                    if (int(first_input) == 6):
+                        self.dayParser(variables, second_input)
+                        daySearch = True
+                    elif (variables[option].lower() == second_input.lower()):
                         for i in range(1, len(list(variables.values()))):
                             if (list(variables.values())[i] == None): 
-                                print(display[i-1] + ": " + Route.calculate_duration(list(variables.values())[3], list(variables.values())[4]) + "\n")
+                                print(Trip_planner.display[i-1] + ": " + Route.calculate_duration(list(variables.values())[3], list(variables.values())[4]) + "\n")
                             elif i == 1:
-                                counter += 1
-                                print(str(counter) + ". " + display[i-1] + ": " + list(variables.values())[i], end = ", ")
+                                Trip_planner.counter += 1
+                                print(str(Trip_planner.counter) + ". " + Trip_planner.display[i-1] + ": " + list(variables.values())[i], end = ", ")
                             else: 
-                                print(display[i-1] + ": " + list(variables.values())[i], end = ", ")
-                if (counter == 0):
+                                print(Trip_planner.display[i-1] + ": " + list(variables.values())[i], end = ", ")
+                if (Trip_planner.counter == 0 and daySearch != True):
                     print("No results found\n")
 
             elif (int(first_input) == 9):
@@ -46,8 +53,29 @@ class Trip_planner:
                 print("\nPlease select between 1 and 9.\n")
             
             
-            
+    def dayParser(self, variables, second_input):
+        days = {0: ["Monday", "Mon"], 1: ["Tuesday", "Tue"], 2: ["Wednesday", "Wed"], 3: ["Thursday", "Thu"], 4: ["Friday", "Fri"], 5: ["Saturday", "Sat"], 6: ["Sunday", "Sun"]}
+        daysLookup = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
+        operationDay = list(variables.values())[6]
+        lst = [item[0] for item in list(days.values())]
         
+        if("-" in operationDay): #if it's a range
+            for j in lst:
+                if(j.lower() == second_input.lower()): # Making sure you're putting in an actual day
+                    first_day = operationDay.split('-')[0]
+                    last_day = operationDay.split('-')[1]
+                    for k in range(daysLookup.get(first_day), daysLookup.get(last_day) + 1):
+                        if (days.get(k)[0].lower() == second_input.lower()):
+                            for i in range(1, len(list(variables.values()))):
+                                if (list(variables.values())[i] == None): 
+                                    print(Trip_planner.display[i-1] + ": " + Route.calculate_duration(list(variables.values())[3], list(variables.values())[4]) + "\n")
+                                elif i == 1:
+                                    Trip_planner.counter += 1
+                                    print(str(Trip_planner.counter) + ". " + Trip_planner.display[i-1] + ": " + list(variables.values())[i], end = ", ")
+                                else: 
+                                    print(Trip_planner.display[i-1] + ": " + list(variables.values())[i], end = ", ")
+
+                            
 
     # TO-DO: sort routes using an input parameter
     def sort_routes(self):
