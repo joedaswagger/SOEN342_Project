@@ -29,11 +29,13 @@ class Trip_planner:
                         for route in self.routes:
                             if route.departure_city.lower().strip() == input_city.lower().strip():
                                 self.search_results.append(route)
+                        break
                     case 2:
                         input_city = input("\nCity name: ")
                         for route in self.routes:
                             if route.arrival_city.lower().strip() == input_city.lower().strip():
                                 self.search_results.append(route)
+                        break
                     case 3:
                         while True:
                             time_input = input("\nEnter your preffered departure hour: ")
@@ -47,6 +49,7 @@ class Trip_planner:
                                     break
                             except:
                                 print("\nPlease enter a numerical value\n")
+                        break
                     case 4:
                         while True:
                             time_input = input("\nEnter your preffered arrival hour: ")
@@ -60,6 +63,7 @@ class Trip_planner:
                                     break
                             except:
                                 print("\nPlease enter a numerical value\n")
+                        break
                     case 5:
                         train_types = [
                             "RJX", "ICE", "InterCity", "Frecciarossa", "RegioExpress", "EuroCity", "TGV", "Italo", "RE", "Nightjet", "Intercités", "Thalys", "Eurostar", "TER", "IC", "AVE", "Railjet"
@@ -77,12 +81,13 @@ class Trip_planner:
                                     print("\nPlease enter a value from 1 to 17\n")
                                 else:
                                     for route in self.routes:
-                                        if route.train_type == train_types[train_selection]:
+                                        if route.train_type == train_types[train_selection - 1]:
                                             self.search_results.append(route)
                                     break
 
                             except ValueError:
                                 print("\nPlease enter a numerical value\n")
+                        break
                     case 6:
                         days_of_operation = [
                             "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
@@ -106,6 +111,7 @@ class Trip_planner:
 
                             except ValueError:
                                 print("\nPlease enter a numerical value\n")
+                        break
                     case 7:
                             minimum = input("\nEnter the smallest amount you're willing to spend: ")
                             maximum = input("\nEnter the largest amount you're willing to spend: ")
@@ -138,26 +144,15 @@ class Trip_planner:
                         print("\nPlease select a number from 1 to 9\n")
             except ValueError:
                 print("\nPlease enter a numerical selection\n")
+        
+        self.print_results()
 
-    def printResults(self, variables):
-        isLastParam = False
-        for i in range(1, len(list(variables.values()))):
-            if (list(variables.values())[i] == None): 
-                print(Trip_planner.display[i-1] + ": " + Route.calculate_duration(list(variables.values())[3], list(variables.values())[4]) + "\n")
-                isLastParam = True
-            elif i == 1:
-                not isLastParam
-                Trip_planner.counter += 1
-                print(str(Trip_planner.counter) + ". " + Trip_planner.display[i-1] + ": " + list(variables.values())[i], end = ", ")
-                
-            else: 
-                print(Trip_planner.display[i-1] + ": " + list(variables.values())[i], end = ", ")
-            if((Trip_planner.counter) % 51 == 50 and isLastParam):
-                input("\nPress enter to display more...")
-                continue
-    
+    def print_results(self):
+        print(str(len(self.search_results)) + " connections found for the search criteria.")
 
-            
+        for route in self.search_results:
+            route.print_self()
+
     def dayParser(self, variables, second_input):
         days = {0: ["Monday", "Mon"], 1: ["Tuesday", "Tue"], 2: ["Wednesday", "Wed"], 3: ["Thursday", "Thu"], 4: ["Friday", "Fri"], 5: ["Saturday", "Sat"], 6: ["Sunday", "Sun"]}
         daysLookup = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
