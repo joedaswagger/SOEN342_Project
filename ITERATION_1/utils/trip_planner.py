@@ -25,7 +25,7 @@ class Trip_planner:
             "9. Exit\n")
 
             if (0 < int(first_input) < 9):
-                print("\nNOTE: If searching days of operation, please do not input 'Mon' or 'Tue', simply type out the full days you wish to find.")
+                print("\nNOTE: If searching days of operation, please do not input 'Mon' or 'Tue', simply type out the full days you wish to find. For daily trains, simply type 'Daily'.")
                 second_input = input("Search here: ")
                 print("Results: \n")
                 Trip_planner.counter = 0
@@ -70,18 +70,43 @@ class Trip_planner:
         daysLookup = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
         operationDay = list(variables.values())[6]
         lst = [item[0] for item in list(days.values())]
-        
+
+        if(second_input.lower() == "Daily".lower()):
+            dailyUsed = True
+        else:
+            dailyUsed = False
+
         for j in lst:
-            if(j.lower() == second_input.lower()): # Making sure you're putting in an actual day
+            if(j.lower() == second_input.lower() or dailyUsed == True): # Making sure you're putting in an actual day
+                
                 if("-" in operationDay): #if it's a range
                     first_day = operationDay.split('-')[0]
                     last_day = operationDay.split('-')[1]
                     for k in range(daysLookup.get(first_day), daysLookup.get(last_day) + 1):
                         if (days.get(k)[0].lower() == second_input.lower()):
                             self.printResults(variables)
+                
+                elif("," in operationDay): #if it's a list
+                    listOfDays = operationDay.split(',')
+                    loweredInput = ""
+                    for k in range(len(list((days.keys())))):
+                        if(second_input.lower() == days.get(k)[0].lower()):
+                            loweredInput = days.get(k)[1]
+                            
+                    for l in range(len(listOfDays)):
+                        if(listOfDays[l] == loweredInput):
+                            self.printResults(variables)
+                
+                elif(operationDay == "Daily"):
+                    self.printResults(variables)
+                    if(second_input.lower() == "Daily".lower()):
+                        dailyUsed = False
 
-                elif("'" in operationDay): #if it's a list
-                    pass
+                else:
+                    for k in range(len(list(days.keys()))):
+                        if(second_input.lower() == days.get(k)[0].lower()):
+                            self.printResults(variables)
+                        
             
 
                             
