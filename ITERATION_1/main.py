@@ -19,5 +19,5 @@ while True:
         print("\nPlease input a numeric value.\n")
 
 parser = Route_parser(default_path)
-manager = Trip_planner(parser.routes)
+# manager = Trip_planner(parser.routes)
 

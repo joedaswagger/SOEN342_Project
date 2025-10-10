@@ -9,21 +9,26 @@ class Route:
         self.days_of_operation = days_of_operation
         self.first_class_rate = first_class_rate
         self.second_class_rate = second_class_rate
-        self.trip_duration = None
+        self.trip_duration_days = 0
+        self.trip_duration_hours = 0
+        self.trip_duration_minutes = 0
 
         
 
-    # TO-DO: calculate duration from start to end of the trip
-    def calculate_duration(depTime, arrTime):
-        dep = depTime.split(':')
-        arr = arrTime.split(':')
+    def calculate_duration(self):
+        departure_time_values = self.departure_time.split(':')
+        arrival_time_values = self.arrival_time.split(':')
+        if "(+1d)" in arrival_time_values[1]:
+            arrival_time_values[1] = arrival_time_values[1].split(" ")[0]
+            self.trip_duration_days = 1
 
-        
+        if int(arrival_time_values[0]) < int(departure_time_values[0]):
+            self.trip_duration_hours = (24 - int(departure_time_values[0])) + int(arrival_time_values[0])
+        else:
+            self.trip_duration_hours = int(arrival_time_values[0]) - int(departure_time_values[0])
 
-        hour = int(arr[0]) - int(dep[0])
-        arr = arr[1].split(' (')
-        minute = abs(int(arr[0]) - int(dep[1]))
+        self.trip_duration_minutes = int(arrival_time_values[1]) - int(departure_time_values[1])
 
-        
-
-        return str(hour) + " hours and " + str(minute) + " minutes"
+        if self.trip_duration_minutes < 0:
+            self.trip_duration_hours = self.trip_duration_hours - 1
+            self.trip_duration_minutes = 60 + self.trip_duration_minutes

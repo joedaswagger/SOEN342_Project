@@ -2,18 +2,17 @@ from utils.route import Route
 
 class Trip_planner:
     display = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Train Type", "Days of Operation", "First-Class Rate", "Second-Class Rate", "Trip Duration"]
-    counter = 0
-
     def __init__(self, routes):
         self.routes = routes
+        self.search_results = []
+        self.counter = 5
         self.search()
 
-    # TO-DO: search for routes using any parameter except ID
     def search(self):
         
         while True:
             options = {1: "departure_city", 2: "arrival_city", 3: "departure_time", 4: "arrival_time", 5: "train_type", 6: "days_of_operation", 7: "first_class_rate", 8: "second_class_rate"}
-            first_input = input("Select which criteria you wish to use to find your route: \n" \
+            first_input = input("\nSelect which criteria you wish to use to find your route: \n" \
             "1. Departure City\n" \
             "2. Arrival City\n" \
             "3. Departure Time\n" \

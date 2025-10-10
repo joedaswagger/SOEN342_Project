@@ -41,4 +41,7 @@ class Route_parser:
             next(self.file)
             for line in self.file:
                 route = Route(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8])
+                route.calculate_duration()
+                print(route.route_id)
+                print(str(route.trip_duration_days) + " days, " + str(route.trip_duration_hours) + " hours,  " + str(route.trip_duration_minutes) + " minutes")
                 self.routes.append(route)
