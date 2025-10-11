@@ -38,4 +38,4 @@ class Route:
 
 
     def print_self(self):
-        print(f"\n{self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate}")
+        print(f"\n{self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate} | Duration: {self.trip_duration_days} days, {self.trip_duration_hours} hours and {self.trip_duration_minutes} minutes")

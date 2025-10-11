@@ -41,7 +41,7 @@ class Trip_planner:
                             for connection in depart_connections:
                                 for correspondance in arrival_connections:
                                     if connection.arrival_city.lower().strip() == correspondance.departure_city.lower().strip():
-                                        self.search_results_one_stop.append({"initial": connection, "final": correspondance})
+                                        self.search_results_one_stop.append({"initial": connection, "final": correspondance, "transfer_time": ""})
 
                         if len(self.search_results) == 0 and len(self.search_results_one_stop) == 0:
                             depart_connections = [route for route in self.routes if route.departure_city.lower().strip() == input_departure_city.lower().strip()]
@@ -55,7 +55,7 @@ class Trip_planner:
                                     if connection.arrival_city.lower().strip() == middle.departure_city.lower().strip():
                                         for correspondance in arrival_connections:
                                             if middle.arrival_city.lower().strip() == correspondance.departure_city.lower().strip():
-                                                self.search_results_two_stops.append({"initial": connection, "middle": middle, "final": correspondance})
+                                                self.search_results_two_stops.append({"initial": connection, "middle": middle, "final": correspondance, "transfer_time": ""})
 
                         break
                     case 2:
@@ -170,6 +170,8 @@ class Trip_planner:
         self.print_results()
 
     def print_results(self):
+        self.calculate_transfer_times()
+
         print("\n" + str(len(self.search_results)) + " connections found for the search criteria.\n")
 
         for route in self.search_results:
@@ -182,6 +184,7 @@ class Trip_planner:
                 route["initial"].print_self()
                 print("\nCORRESPONDING WITH")
                 route["final"].print_self()
+                print(route["transfer_time"])
 
         if len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo one-stop correspondance found; generating two-stops correspondances...\n")
@@ -192,6 +195,7 @@ class Trip_planner:
                 route["middle"].print_self()
                 print("\nCORRESPONDING WITH")
                 route["final"].print_self()
+                print(route["transfer_time"])
 
         if len(self.search_results_two_stops) == 0 and len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo two-stop correspondance found.\n")
@@ -230,7 +234,27 @@ class Trip_planner:
 
     def calculate_transfer_times(self):
         if len(self.search_results_one_stop) != 0:
-            pass
+            for connection in self.search_results_one_stop:
+                start_time_values = connection["initial"].arrival_time.split(":")
+                end_time_values = connection["final"].departure_time.split(":")
+
+                hours = 0
+
+                if "(+1d)" in start_time_values[1]:
+                    start_time_values[1] = start_time_values[1].split(" ")[0]
+
+                if int(end_time_values[0]) < int(start_time_values[0]):
+                    hours = (24 - int(start_time_values[0])) + int(end_time_values[0])
+                else:
+                    hours = int(end_time_values[0]) - int(start_time_values[0])
+
+                minutes = int(end_time_values[1]) - int(start_time_values[1])
+
+                if minutes < 1:
+                    hours = hours - 1
+                    minutes = 60 + minutes
+
+                connection["transfer_time"] = f"\nTotal transfer time: {hours} hours and {minutes} minutes.\n"
 
         if len(self.search_results_two_stops) != 0:
             pass
