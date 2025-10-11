@@ -228,5 +228,9 @@ class Trip_planner:
 
         self.print_results()      
 
-    # def construct_connections(self):
-    #     pass
+    def calculate_transfer_times(self):
+        if len(self.search_results_one_stop) != 0:
+            pass
+
+        if len(self.search_results_two_stops) != 0:
+            pass
