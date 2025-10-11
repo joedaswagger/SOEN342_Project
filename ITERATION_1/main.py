@@ -19,5 +19,24 @@ while True:
         print("\nPlease input a numeric value.\n")
 
 parser = Route_parser(default_path)
-manager = Trip_planner(parser.routes)
+planner = Trip_planner(parser.routes)
 
+while True:
+    menu = input("\n[MENU] Please select an operation:\n" \
+        "1. Search connections\n" \
+        "2. Sort previous results\n" \
+        "3. Exit\n")
+    
+    try:
+        match int(menu):
+            case 1:
+                planner.search()
+            case 2:
+                planner.sort()
+            case 3:
+                print("\nThank you for using our trip search algorithm!\n")
+                break
+            case _:
+                print("\nPlease select an option from the menu\n")
+    except ValueError:
+        print("\nPlease enter a numerical selection\n")
