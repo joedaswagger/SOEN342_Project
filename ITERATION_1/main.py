@@ -24,7 +24,7 @@ planner = Trip_planner(parser.routes)
 while True:
     menu = input("\n[MENU] Please select an operation:\n" \
         "1. Search connections\n" \
-        "2. Sort connections\n" \
+        "2. Sort previous results\n" \
         "3. -----\n" \
         "4. Exit\n")
     
@@ -33,7 +33,7 @@ while True:
             case 1:
                 planner.search()
             case 2:
-                pass
+                planner.sort()
             case 3:
                 pass
             case 4:

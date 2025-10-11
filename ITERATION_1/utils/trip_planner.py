@@ -105,7 +105,7 @@ class Trip_planner:
                                     print("\nPlease enter a value from 1 to 7\n")
                                 else:
                                     for route in self.routes:
-                                        if route.days_of_operation == days_of_operation[day_seletion]:
+                                        if route.days_of_operation == days_of_operation[day_seletion - 1]:
                                             self.search_results.append(route)
                                     break
 
@@ -152,6 +152,38 @@ class Trip_planner:
 
         for route in self.search_results:
             route.print_self()
+
+    def sort(self):
+        while True:
+            sort_parameter = input("\nWhich parameter would you like to use for trip sorting: \n" \
+                "1. Trip duration\n" \
+                "2. First Class ticket rate (in euro)\n" \
+                "3. Second class ticket rate (in euro)\n"
+                "4. Cancel\n")
+            
+            direction_input = input("\nDo you want to sort ascending (press ENTER) or descending (any input): ")
+            direction_reverse = False if direction_input == "" else True
+            
+            try:
+                match int(sort_parameter):
+                    case 1:
+                        self.search_results = sorted(self.search_results, key=lambda c: c.trip_duration, reverse = direction_reverse)
+                        break
+                    case 2:
+                        self.search_results = sorted(self.search_results, key=lambda c: c.first_class_rate, reverse = direction_reverse)
+                        break
+                    case 3:
+                        self.search_results = sorted(self.search_results, key=lambda c: c.second_class_rate, reverse = direction_reverse)
+                        break
+                    case 4:
+                        print("\nReturning to main menu\n")
+                        break
+                    case _:
+                        print("\nPlease select a number from 1 to 4\n")
+            except ValueError:
+                print("\nPlease enter a numerical selection\n")
+
+        self.print_results()
 
     def dayParser(self, variables, second_input):
         days = {0: ["Monday", "Mon"], 1: ["Tuesday", "Tue"], 2: ["Wednesday", "Wed"], 3: ["Thursday", "Thu"], 4: ["Friday", "Fri"], 5: ["Saturday", "Sat"], 6: ["Sunday", "Sun"]}

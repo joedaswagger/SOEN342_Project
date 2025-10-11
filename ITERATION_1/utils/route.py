@@ -9,6 +9,7 @@ class Route:
         self.days_of_operation = days_of_operation
         self.first_class_rate = first_class_rate
         self.second_class_rate = second_class_rate
+        self.trip_duration = 0
         self.trip_duration_days = 0
         self.trip_duration_hours = 0
         self.trip_duration_minutes = 0
@@ -33,6 +34,8 @@ class Route:
             self.trip_duration_hours = self.trip_duration_hours - 1
             self.trip_duration_minutes = 60 + self.trip_duration_minutes
 
+        self.trip_duration = (self.trip_duration_days * 24 * 60) + (self.trip_duration_hours * 60) + self.trip_duration_minutes
+
 
     def print_self(self):
-        print(f"\nID: {self.route_id} -- {self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate}")
+        print(f"\n{self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate}")
