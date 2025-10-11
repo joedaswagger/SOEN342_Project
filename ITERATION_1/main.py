@@ -25,8 +25,7 @@ while True:
     menu = input("\n[MENU] Please select an operation:\n" \
         "1. Search connections\n" \
         "2. Sort previous results\n" \
-        "3. -----\n" \
-        "4. Exit\n")
+        "3. Exit\n")
     
     try:
         match int(menu):
@@ -35,8 +34,6 @@ while True:
             case 2:
                 planner.sort()
             case 3:
-                pass
-            case 4:
                 print("\nThank you for using our trip search algorithm!\n")
                 break
             case _:

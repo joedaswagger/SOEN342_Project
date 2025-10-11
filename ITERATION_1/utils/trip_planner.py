@@ -5,38 +5,60 @@ class Trip_planner:
     def __init__(self, routes):
         self.routes = routes
         self.search_results = []
+        self.search_results_one_stop = []
+        self.search_results_two_stops = []
         self.counter = 5
 
     def search(self):
         while True:
             self.search_results = []
+            self.search_results_one_stop = []
+            self.search_results_two_stops = []
 
             search_parameter = input("\nWhich parameter would you like to use for trip search: \n" \
-            "1. Departure City\n" \
-            "2. Arrival City\n" \
-            "3. Departure Time\n" \
-            "4. Arrival Time\n" \
-            "5. Train Type\n" \
-            "6. Days of Operation\n" \
-            "7. First Class ticket rate (in euro)\n" \
-            "8. Second class ticket rate (in euro)\n"
-            "9. Cancel\n")
+            "1. City\n" \
+            "2. Departure Time\n" \
+            "3. Arrival Time\n" \
+            "4. Train Type\n" \
+            "5. Days of Operation\n" \
+            "6. First Class ticket rate (in euro)\n" \
+            "7. Second class ticket rate (in euro)\n"
+            "8. Cancel\n")
 
             try:
                 match int(search_parameter):
                     case 1:
-                        input_city = input("\nCity name: ")
+                        input_departure_city = input("\nDeparture city name: ")
+                        input_arrival_city = input("\nArrival city name: ")
                         for route in self.routes:
-                            if route.departure_city.lower().strip() == input_city.lower().strip():
+                            if route.departure_city.lower().strip() == input_departure_city.lower().strip() and route.arrival_city.lower().strip() == input_arrival_city.lower().strip():
                                 self.search_results.append(route)
+                        
+                        if len(self.search_results) == 0:
+                            depart_connections = [route for route in self.routes if route.departure_city.lower().strip() == input_departure_city.lower().strip()]
+                            arrival_connections = [route for route in self.routes if route.arrival_city.lower().strip() == input_arrival_city.lower().strip()]
+
+                            for connection in depart_connections:
+                                for correspondance in arrival_connections:
+                                    if connection.arrival_city.lower().strip() == correspondance.departure_city.lower().strip():
+                                        self.search_results_one_stop.append({"initial": connection, "final": correspondance})
+
+                        if len(self.search_results) == 0 and len(self.search_results_one_stop) == 0:
+                            depart_connections = [route for route in self.routes if route.departure_city.lower().strip() == input_departure_city.lower().strip()]
+                            first_stop_cities = [route.arrival_city.lower().strip() for route in depart_connections]
+                            arrival_connections = [route for route in self.routes if route.arrival_city.lower().strip() == input_arrival_city.lower().strip()]
+                            second_stop_cities = [route.departure_city.lower().strip() for route in arrival_connections]
+                            middle_connections = [route for route in self.routes if route.departure_city.lower().strip() in first_stop_cities and route.arrival_city.lower().strip() in second_stop_cities]
+
+                            for connection in depart_connections:
+                                for middle in middle_connections:
+                                    if connection.arrival_city.lower().strip() == middle.departure_city.lower().strip():
+                                        for correspondance in arrival_connections:
+                                            if middle.arrival_city.lower().strip() == correspondance.departure_city.lower().strip():
+                                                self.search_results_two_stops.append({"initial": connection, "middle": middle, "final": correspondance})
+
                         break
                     case 2:
-                        input_city = input("\nCity name: ")
-                        for route in self.routes:
-                            if route.arrival_city.lower().strip() == input_city.lower().strip():
-                                self.search_results.append(route)
-                        break
-                    case 3:
                         while True:
                             time_input = input("\nEnter your preffered departure hour: ")
                             try:
@@ -50,7 +72,7 @@ class Trip_planner:
                             except:
                                 print("\nPlease enter a numerical value\n")
                         break
-                    case 4:
+                    case 3:
                         while True:
                             time_input = input("\nEnter your preffered arrival hour: ")
                             try:
@@ -64,7 +86,7 @@ class Trip_planner:
                             except:
                                 print("\nPlease enter a numerical value\n")
                         break
-                    case 5:
+                    case 4:
                         train_types = [
                             "RJX", "ICE", "InterCity", "Frecciarossa", "RegioExpress", "EuroCity", "TGV", "Italo", "RE", "Nightjet", "Intercités", "Thalys", "Eurostar", "TER", "IC", "AVE", "Railjet"
                         ]
@@ -88,7 +110,7 @@ class Trip_planner:
                             except ValueError:
                                 print("\nPlease enter a numerical value\n")
                         break
-                    case 6:
+                    case 5:
                         days_of_operation = [
                             "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
                         ]
@@ -112,7 +134,7 @@ class Trip_planner:
                             except ValueError:
                                 print("\nPlease enter a numerical value\n")
                         break
-                    case 7:
+                    case 6:
                             minimum = input("\nEnter the smallest amount you're willing to spend: ")
                             maximum = input("\nEnter the largest amount you're willing to spend: ")
                             try:
@@ -125,7 +147,7 @@ class Trip_planner:
                                     break
                             except:
                                 print("\nPlease enter a numerical value\n")
-                    case 8:
+                    case 7:
                             minimum = input("\nEnter the smallest amount you're willing to spend: ")
                             maximum = input("\nEnter the largest amount you're willing to spend: ")
                             try:
@@ -138,7 +160,7 @@ class Trip_planner:
                                     break
                             except:
                                 print("\nPlease enter a numerical value\n")
-                    case 9:
+                    case 8:
                         print("\nReturning to main menu\n")
                     case _:
                         print("\nPlease select a number from 1 to 9\n")
@@ -148,10 +170,31 @@ class Trip_planner:
         self.print_results()
 
     def print_results(self):
-        print(str(len(self.search_results)) + " connections found for the search criteria.")
+        print("\n" + str(len(self.search_results)) + " connections found for the search criteria.\n")
 
         for route in self.search_results:
             route.print_self()
+
+        if len(self.search_results) == 0:
+            print("\nNo connection found; generating one-stop correspondances...\n")
+
+            for route in self.search_results_one_stop:
+                route["initial"].print_self()
+                print("\nCORRESPONDING WITH")
+                route["final"].print_self()
+
+        if len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
+            print("\nNo one-stop correspondance found; generating two-stops correspondances...\n")
+
+            for route in self.search_results_two_stops:
+                route["initial"].print_self()
+                print("\nCORRESPONDING WITH")
+                route["middle"].print_self()
+                print("\nCORRESPONDING WITH")
+                route["final"].print_self()
+
+        if len(self.search_results_two_stops) == 0 and len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
+            print("\nNo two-stop correspondance found.\n")
 
     def sort(self):
         while True:
@@ -183,58 +226,7 @@ class Trip_planner:
             except ValueError:
                 print("\nPlease enter a numerical selection\n")
 
-        self.print_results()
+        self.print_results()      
 
-    def dayParser(self, variables, second_input):
-        days = {0: ["Monday", "Mon"], 1: ["Tuesday", "Tue"], 2: ["Wednesday", "Wed"], 3: ["Thursday", "Thu"], 4: ["Friday", "Fri"], 5: ["Saturday", "Sat"], 6: ["Sunday", "Sun"]}
-        daysLookup = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
-        operationDay = list(variables.values())[6]
-        lst = [item[0] for item in list(days.values())]
-
-        if(second_input.lower() == "Daily".lower()):
-            dailyUsed = True
-        else:
-            dailyUsed = False
-
-        for j in lst:
-            if(j.lower() == second_input.lower() or dailyUsed == True): # Making sure you're putting in an actual day
-                
-                if("-" in operationDay): #if it's a range
-                    first_day = operationDay.split('-')[0]
-                    last_day = operationDay.split('-')[1]
-                    for k in range(daysLookup.get(first_day), daysLookup.get(last_day) + 1):
-                        if (days.get(k)[0].lower() == second_input.lower()):
-                            self.printResults(variables)
-                
-                elif("," in operationDay): #if it's a list
-                    listOfDays = operationDay.split(',')
-                    loweredInput = ""
-                    for k in range(len(list((days.keys())))):
-                        if(second_input.lower() == days.get(k)[0].lower()):
-                            loweredInput = days.get(k)[1]
-                            
-                    for l in range(len(listOfDays)):
-                        if(listOfDays[l] == loweredInput):
-                            self.printResults(variables)
-                
-                elif(operationDay == "Daily"):
-                    self.printResults(variables)
-                    if(second_input.lower() == "Daily".lower()):
-                        dailyUsed = False
-
-                else:
-                    for k in range(len(list(days.keys()))):
-                        if(second_input.lower() == days.get(k)[0].lower()):
-                            self.printResults(variables)
-                        
-            
-
-                            
-
-    # TO-DO: sort routes using an input parameter
-    def sort_routes(self):
-        pass
-
-    # TO-DO: build custom route for two cities with no direct connection
-    def construct_connections(self):
-        pass
+    # def construct_connections(self):
+    #     pass
