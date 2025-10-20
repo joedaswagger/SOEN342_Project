@@ -1,5 +1,6 @@
 import sqlite3
-import Ticket
+import pickle
+from Ticket import Ticket
 
 class Ticket_Database:
 
@@ -10,13 +11,25 @@ class Ticket_Database:
     #Creates table at init
     def create_table(self):
         query = """
-        CREATE TABLE IF NOT EXISTS tickets (ticket_id TEXT PRIMARY KEY, traveller_name TEXT, traveller_age INTEGER, traveller_id TEXT, connection_id TEXT, ticket_type TEXT, issue_date TEXT)
+        CREATE TABLE IF NOT EXISTS tickets (ticket_id TEXT PRIMARY KEY, traveller_name TEXT, traveller_age INTEGER, traveller_id TEXT, connection_id TEXT, ticket_type TEXT, date_issued TEXT)
         """
 
         self.conn.execute(query)
         self.conn.commit()
+    def insert_ticket(self, ticket: Ticket):
+        #Insert a ticket into database.
+        query = """
+        INSERT INTO tickets (ticket_id, traveller_name, traveller_age, traveller_id,connection_id, ticket_type, issue_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """
+        self.conn.execute(query, ticket.to_tuple())
+        self.conn.commit()
 
-
+    def show_all(self):
+        #Display all tickets.
+        cursor = self.conn.execute("SELECT * FROM tickets")
+        return cursor.fetchall()
+    
 if __name__ == "__main__":
     db = Ticket_Database()
 
@@ -29,4 +42,4 @@ if __name__ == "__main__":
     db.insert_ticket(t2)
 
     print("Tickets inserted!\nCurrent database data\n")
-    db.show_all()
+    print(db.show_all())

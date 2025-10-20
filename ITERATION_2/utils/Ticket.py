@@ -32,6 +32,6 @@ class Ticket:
         self.traveller_id,
         self.connection_id,
         self.ticket_type,
-        self.issue_date
+        self.date_issued
         )
 
