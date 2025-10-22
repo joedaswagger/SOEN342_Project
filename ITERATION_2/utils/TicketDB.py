@@ -1,6 +1,6 @@
 import sqlite3
 import pickle
-from Ticket import Ticket
+from utils.Ticket import Ticket
 
 class Ticket_Database:
 
@@ -32,7 +32,7 @@ class Ticket_Database:
     
     def database(self, t1):
         db = Ticket_Database()
-        
+
         # Add to db
         db.insert_ticket(t1)
 

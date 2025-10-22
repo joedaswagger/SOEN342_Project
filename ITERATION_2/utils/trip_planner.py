@@ -1,5 +1,5 @@
 from utils.route import Route
-from utils.TicketDB import TicketDB
+from utils.TicketDB import Ticket_Database
 
 class Trip_planner:
     foundSomething = True
@@ -312,7 +312,7 @@ class Trip_planner:
         counter = 0
         
         while True:
-            if(0 < choice <= len(self.search_results) or 0 < choice <= len(self.search_results_one_stop) or 0 < choice <= len(self.search_results_two_stops)): #checking for valid ID
+            if(0 < int(choice) <= len(self.search_results) or 0 < int(choice) <= len(self.search_results_one_stop) or 0 < int(choice) <= len(self.search_results_two_stops)): #checking for valid ID
                 name = input("\nEnter name: ")
                 age = input("\nEnter age: ")
                 id = input("\nEnter ID: ")
@@ -325,8 +325,8 @@ class Trip_planner:
                 try:
                     match int(soloOrMore):
                         case 1:
-                            db = (name, age, id, self.search_results[0][choice], "single") #TODO: Make all this work right (self.search_results not sure if it works like this, also the way multiple reservations are defined in Ticket class needs fixing)
-                            TicketDB.database(db)
+                            t1 = (name, age, id, self.search_results[int(choice) - 1].route_id, "single") #Can't get database to work. (The way multiple reservations are defined in Ticket class needs fixing)
+                            Ticket_Database.database(t1)
                         case 2:
                             print("\nReturning to main menu")
                             break
