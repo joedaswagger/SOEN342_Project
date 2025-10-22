@@ -19,7 +19,7 @@ class Ticket_Database:
     def insert_ticket(self, ticket: Ticket):
         #Insert a ticket into database.
         query = """
-        INSERT INTO tickets (ticket_id, traveller_name, traveller_age, traveller_id,connection_id, ticket_type, issue_date)
+        INSERT INTO tickets (ticket_id, traveller_name, traveller_age, traveller_id,connection_id, ticket_type, date_issued)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """
         self.conn.execute(query, ticket.to_tuple())

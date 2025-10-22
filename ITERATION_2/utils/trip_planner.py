@@ -1,6 +1,8 @@
 from utils.route import Route
 
 class Trip_planner:
+    foundSomething = True
+    quitToMain = False
     display = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Train Type", "Days of Operation", "First-Class Rate", "Second-Class Rate", "Trip Duration"]
     def __init__(self, routes):
         self.routes = routes
@@ -162,44 +164,73 @@ class Trip_planner:
                                 print("\nPlease enter a numerical value\n")
                     case 8:
                         print("\nReturning to main menu\n")
+                        self.quitToMain = True
+                        break
                     case _:
                         print("\nPlease select a number from 1 to 9\n")
             except ValueError:
                 print("\nPlease enter a numerical selection\n")
         
-        self.print_results()
+        if not self.quitToMain:
+            self.print_results()
 
     def print_results(self):
         self.calculate_transfer_times()
 
         print("\n" + str(len(self.search_results)) + " connections found for the search criteria.\n")
 
+        counter = 0
+
         for route in self.search_results:
-            route.print_self()
+            counter += 1
+            route.print_self(counter)
             print("____________________________________")
 
         if len(self.search_results) == 0:
             print("\nNo connection found; generating one-stop correspondances...\n")
 
             for route in self.search_results_one_stop:
-                route["initial"].print_self()
+                counter += 1
+                
+                route["initial"].print_self(counter)
                 print("\nCORRESPONDING WITH " + route["transfer_time"])
-                route["final"].print_self()
+                route["final"].print_self(counter)
                 print("____________________________________")
 
         if len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo one-stop correspondance found; generating two-stops correspondances...\n")
 
             for route in self.search_results_two_stops:
-                route["initial"].print_self()
+                counter += 1
+                
+                route["initial"].print_self(counter)
                 print("\nCORRESPONDING WITH " + route["transfer_time1"])
-                route["middle"].print_self()
+                route["middle"].print_self(counter)
                 print("\nCORRESPONDING WITH " + route["transfer_time2"])
-                route["final"].print_self()
+                route["final"].print_self(counter)
                 print("____________________________________")
 
         if len(self.search_results_two_stops) == 0 and len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo two-stop correspondance found.\n")
+            self.foundSomething = False
+        
+        if (self.foundSomething):
+            while True: 
+                choiceNext = input("\nSelect option: \n" \
+                                    "1. Select a ticket to reserve \n"
+                                    "2. Cancel \n")
+                try:
+                    match int(choiceNext):
+                        case 1:
+                            self.selection()
+                        case 2:
+                            print("\nReturning to main menu")
+                            break
+                except ValueError:
+                    print("\nPlease enter a numerical value\n")
+            
+                
+
 
     def sort(self):
         while True:
@@ -271,3 +302,14 @@ class Trip_planner:
             minutes = 60 + minutes
 
         return f"(transfer time: {hours} hours and {minutes} minutes)"
+    
+        
+    def selection(self): #Selecting from choices
+
+        choice = input("\nSelect your ticket: ")
+        
+        if(0 < choice <= len(self.search_results) or 0 < choice <= len(self.search_results_one_stop) or 0 < choice <= len(self.search_results_two_stops)): #checking for valid ID
+            pass
+
+
+        pass
