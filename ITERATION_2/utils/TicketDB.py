@@ -30,16 +30,11 @@ class Ticket_Database:
         cursor = self.conn.execute("SELECT * FROM tickets")
         return cursor.fetchall()
     
-if __name__ == "__main__":
-    db = Ticket_Database()
+    def database(self, t1):
+        db = Ticket_Database()
+        
+        # Add to db
+        db.insert_ticket(t1)
 
-    # Create test tickets
-    t1 = Ticket("Rohit", 22, "A000", "C456", "single")
-    t2 = Ticket("Matthew", 35, "B001", "C123", "multiple")
-
-    # Add to db
-    db.insert_ticket(t1)
-    db.insert_ticket(t2)
-
-    print("Tickets inserted!\nCurrent database data\n")
-    print(db.show_all())
+        print("Tickets inserted!\nCurrent database data\n")
+        print(db.show_all())

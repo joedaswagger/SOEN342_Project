@@ -1,4 +1,5 @@
 from utils.route import Route
+from utils.TicketDB import TicketDB
 
 class Trip_planner:
     foundSomething = True
@@ -307,9 +308,30 @@ class Trip_planner:
     def selection(self): #Selecting from choices
 
         choice = input("\nSelect your ticket: ")
+
+        counter = 0
         
-        if(0 < choice <= len(self.search_results) or 0 < choice <= len(self.search_results_one_stop) or 0 < choice <= len(self.search_results_two_stops)): #checking for valid ID
-            pass
+        while True:
+            if(0 < choice <= len(self.search_results) or 0 < choice <= len(self.search_results_one_stop) or 0 < choice <= len(self.search_results_two_stops)): #checking for valid ID
+                name = input("\nEnter name: ")
+                age = input("\nEnter age: ")
+                id = input("\nEnter ID: ")
 
+                soloOrMore = input("\n Select option" \
+                "\n1. Travelling alone" \
+                "\n2. Travelling with others")
 
-        pass
+                
+                try:
+                    match int(soloOrMore):
+                        case 1:
+                            db = (name, age, id, self.search_results[0][choice], "single") #TODO: Make all this work right (self.search_results not sure if it works like this, also the way multiple reservations are defined in Ticket class needs fixing)
+                            TicketDB.database(db)
+                        case 2:
+                            print("\nReturning to main menu")
+                            break
+                except ValueError:
+                    print("\nPlease enter a numerical value\n")
+                    
+ 
+
