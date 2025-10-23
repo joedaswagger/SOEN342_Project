@@ -1,9 +1,8 @@
 from models.route import Route
-from database.ticket_db import Ticket_Database
+from ITERATION_2.database.database import Ticket_Database
 
 class Trip_planner:
     foundSomething = True
-    quitToMain = False
     
     def __init__(self, routes):
         self.routes = routes
@@ -165,15 +164,13 @@ class Trip_planner:
                                 print("\nPlease enter a numerical value\n")
                     case 8:
                         print("\nReturning to main menu\n")
-                        self.quitToMain = True
                         break
                     case _:
                         print("\nPlease select a number from 1 to 9\n")
             except ValueError:
                 print("\nPlease enter a numerical selection\n")
         
-        if not self.quitToMain:
-            self.print_results()
+        self.print_results()
 
     def print_results(self):
         self.calculate_transfer_times()
@@ -213,9 +210,7 @@ class Trip_planner:
 
         if len(self.search_results_two_stops) == 0 and len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo two-stop correspondance found.\n")
-            self.foundSomething = False
-        
-        if (self.foundSomething):
+        else:
             while True: 
                 choiceNext = input("\nSelect option: \n" \
                                     "1. Select a ticket to reserve \n"
@@ -229,9 +224,6 @@ class Trip_planner:
                             break
                 except ValueError:
                     print("\nPlease enter a numerical value\n")
-            
-                
-
 
     def sort(self):
         while True:
@@ -305,7 +297,7 @@ class Trip_planner:
         return f"(transfer time: {hours} hours and {minutes} minutes)"
     
         
-    def selection(self): #Selecting from choices
+    def selection(self):
 
         choice = input("\nSelect your ticket: ")
 

@@ -1,6 +1,6 @@
 class Route:
-    def __init__(self, __route_id, departure_city, arrival_city, departure_time, arrival_time, train_type, days_of_operation, first_class_rate, second_class_rate):
-        self.route_id = __route_id
+    def __init__(self, route_id, departure_city, arrival_city, departure_time, arrival_time, train_type, days_of_operation, first_class_rate, second_class_rate):
+        self.__route_id = route_id
         self.departure_city = departure_city
         self.arrival_city = arrival_city
         self.departure_time = departure_time
@@ -37,5 +37,5 @@ class Route:
         self.trip_duration = (self.trip_duration_days * 24 * 60) + (self.trip_duration_hours * 60) + self.trip_duration_minutes
 
 
-    def print_self(self, index):
-        print(f"\n{str(index)}. {self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate} | Duration: {self.trip_duration_days} days, {self.trip_duration_hours} hours and {self.trip_duration_minutes} minutes")
+    def print_self(self, count):
+        print(f"\n{str(count)}. {self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate} | Duration: {self.trip_duration_days} days, {self.trip_duration_hours} hours and {self.trip_duration_minutes} minutes")
