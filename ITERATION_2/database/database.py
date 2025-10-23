@@ -1,6 +1,8 @@
 import sqlite3
 import pickle
 from models.ticket import Ticket
+from models.trip import Trip
+from models.client import Client
 
 class Database:
     def __init__(self):
@@ -51,21 +53,40 @@ class Database:
         """
 
         self.connection.execute(trip_table_query)
-        self.connection.commit()
         self.connection.execute(ticket_table_query)
         self.connection.execute(client_table_query)
         self.connection.commit()
 
-    def insert_ticket(self, ticket: Ticket):
-        #Insert a ticket into database.
+    def insert_ticket(self, ticket: Ticket, trip: Trip):
         query = """
-        INSERT INTO tickets (ticket_id, traveller_name, traveller_age, traveller_id,connection_id, ticket_type, date_issued)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tickets (ticket_id, cost, route, date_issued, trip_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """
-        self.conn.execute(query, ticket.to_tuple())
-        self.conn.commit()
 
-    def show_all(self):
-        #Display all tickets.
-        cursor = self.conn.execute("SELECT * FROM tickets")
-        return cursor.fetchall()
+        self.connection.execute(query, (ticket.ticket_id, ticket.cost, ticket.route, ticket.date_issued, trip.trip_id))
+        self.connection.commit()
+
+    def insert_trip(self, trip: Trip):
+        query = """
+            INSERT INTO trips (trip_id, trip_type, travelling_class, total_cost)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """
+
+        self.connection.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.total_cost))
+        self.connection.commit()
+
+    def insert_client(self, client: Client):
+        query = """
+            INSERT INTO clients (client_id, first_name, last_name, age, id, trip_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """
+
+        self.connection.execute(query, (client.client_id, client.first_name, client.last_name, client.age, client.id, client.trip.trip_id))
+        self.connection.commit()
+
+    
+
+    # def show_all(self):
+    #     #Display all tickets.
+    #     cursor = self.conn.execute("SELECT * FROM tickets")
+    #     return cursor.fetchall()

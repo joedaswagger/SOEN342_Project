@@ -1,6 +1,6 @@
 class Client:
     def __init__(self):
-        __client_id = None
+        self.client_id = None
         self.first_name = None
         self.last_name = None
         self.age = None
