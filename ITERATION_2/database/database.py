@@ -52,9 +52,10 @@ class Database:
             )
         """
 
-        self.connection.execute(trip_table_query)
-        self.connection.execute(ticket_table_query)
-        self.connection.execute(client_table_query)
+        cursor = self.connection.cursor()
+        cursor.execute(trip_table_query)
+        cursor.execute(ticket_table_query)
+        cursor.execute(client_table_query)
         self.connection.commit()
 
     def insert_ticket(self, ticket: Ticket, trip: Trip):
@@ -63,7 +64,8 @@ class Database:
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """
 
-        self.connection.execute(query, (ticket.ticket_id, ticket.cost, ticket.route, ticket.date_issued, trip.trip_id))
+        cursor = self.connection.cursor()
+        cursor.execute(query, (ticket.ticket_id, ticket.cost, ticket.route, ticket.date_issued, trip.trip_id))
         self.connection.commit()
 
     def insert_trip(self, trip: Trip):
@@ -72,7 +74,8 @@ class Database:
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """
 
-        self.connection.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.total_cost))
+        cursor = self.connection.cursor()
+        cursor.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.total_cost))
         self.connection.commit()
 
     def insert_client(self, client: Client):
@@ -81,8 +84,27 @@ class Database:
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """
 
-        self.connection.execute(query, (client.client_id, client.first_name, client.last_name, client.age, client.id, client.trip.trip_id))
+        cursor = self.connection.cursor()
+        cursor.execute(query, (client.client_id, client.first_name, client.last_name, client.age, client.id, client.trip.trip_id))
         self.connection.commit()
+
+    def get_tickets_from_trip(self, trip_id):
+        cursor = self.connection.cursor()
+        cursor.execute(f"SELECT * FROM tickets WHERE trip_id = {trip_id};")
+        tickets = cursor.fetchall()
+        return tickets
+
+    def get_trip(self, trip_id):
+        cursor = self.connection.cursor()
+        cursor.execute(f"SELECT * FROM trips WHERE trip_id = {trip_id};")
+        trip = cursor.fetchone()
+        return trip
+
+    def get_client(self, last_name, id):
+        cursor = self.connection.cursor()
+        cursor.execute(f"SELECT * FROM clients WHERE last_name = {last_name} AND id = {id};")
+        client = cursor.fetchone()
+        return client
 
     
 
