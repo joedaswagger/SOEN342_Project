@@ -2,20 +2,57 @@ import sqlite3
 import pickle
 from models.ticket import Ticket
 
-class Ticket_Database:
+class Database:
+    def __init__(self):
+        self.database = "trip_planner.db"
+        self.connection = self.connect()
 
-    def __init__(self, db="ticket.db"):
-        self.conn = sqlite3.connect(db)
-        self.create_table()
+        self.create_tables()
     
-    #Creates table at init
-    def create_table(self):
-        query = """
-        CREATE TABLE IF NOT EXISTS tickets (ticket_id TEXT PRIMARY KEY, traveller_name TEXT, traveller_age INTEGER, traveller_id TEXT, connection_id TEXT, ticket_type TEXT, date_issued TEXT)
+    def connect(self):
+        return sqlite3.connect(self.database)
+
+    def close_connection(self):
+        self.connection.close()
+
+    def create_tables(self):
+        ticket_tale_query = """
+            CREATE TABLE IF NOT EXISTS tickets (
+                ticket_id INT PRIMARY KEY,
+                cost REAL,
+                route TEXT,
+                date_issued TEXT,
+                FOREIGN KEY (trip_id) REFERENCES trips (trip_id)
+            )
         """
 
-        self.conn.execute(query)
+        trip_tale_query = """
+            CREATE TABLE IF NOT EXISTS trips (
+                trip_id TEXT PRIMARY KEY,
+                trip_type TEXT,
+                travelling_class TEXT,
+                total_cost REAL
+            )
+        """
+
+        client_tale_query = """
+            CREATE TABLE IF NOT EXISTS clients (
+                client_id TEXT PRIMARY KEY,
+                age INTEGER,
+                first_name TEXT,
+                last_name TEXT,
+                age INTEGER,
+                id TEXT,
+                FOREIGN KEY (trip_id) REFERENCES trips (trip_id)
+                UNIQUE(trip_id)
+            )
+        """
+
+        self.conn.execute(trip_tale_query)
+        self.conn.execute(ticket_tale_query)
+        self.conn.execute(client_tale_query)
         self.conn.commit()
+
     def insert_ticket(self, ticket: Ticket):
         #Insert a ticket into database.
         query = """

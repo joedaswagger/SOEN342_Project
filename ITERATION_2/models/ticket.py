@@ -2,14 +2,13 @@ from datetime import datetime
 import uuid
 
 class Ticket: 
-    def __init__(self, connection_id):
+    def __init__(self, route):
         #Unique ID for each ticket generated automatically
-        self.ticket_id = self.generate_ticket_id() 
-
+        self.__ticket_id = self.generate_ticket_id()
         # Date/time the ticket is issued
         self.date_issued = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        self.connection_id = connection_id
+        self.route = route
+        self.cost = None
 
     def generate_ticket_id(self):
         return str(uuid.uuid4())[:8].upper()

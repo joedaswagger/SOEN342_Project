@@ -1,5 +1,7 @@
 class Trip:
     def __init__(self):
-        _id = None
-        self.reservations = []
+        __trip_id = None
+        self.tickets = []
         self.travel_type = None
+        self.travelling_class = None
+        self.total_cost = None
