@@ -13,6 +13,10 @@ class Authenticator:
     def sign_up(self):
         first_name = input("First name: ")
         last_name = input("Last name: ")
-        age = input("Age: ")
         id = input("ID (e.g.: student ID): ")
+        age = input("Age: ")
+        try:
+            age = int(age)
+        except:
+            age = 0
         return self.db.insert_client(first_name, last_name, age, id)

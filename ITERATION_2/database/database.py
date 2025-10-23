@@ -35,6 +35,7 @@ class Database:
                 route TEXT,
                 date_issued TEXT,
                 trip_id TEXT,
+                assigned_name TEXT,
                 FOREIGN KEY (trip_id) REFERENCES trips (trip_id)
             )
         """
@@ -60,8 +61,8 @@ class Database:
 
     def insert_ticket(self, ticket: Ticket, trip: Trip):
         query = """
-            INSERT INTO tickets (ticket_id, cost, route, date_issued, trip_id)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO tickets (ticket_id, cost, route, date_issued, trip_id, assigned_name)
+            VALUES (?, ?, ?, ?, ?, ?)
         """
 
         cursor = self.connection.cursor()

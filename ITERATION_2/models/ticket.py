@@ -7,6 +7,7 @@ class Ticket:
         self.date_issued = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.route = route # serialize with JSON
         self.cost = None
+        self.assigned_name = None
 
     def generate_ticket_id(self):
         return str(uuid.uuid4())[:8].upper()
