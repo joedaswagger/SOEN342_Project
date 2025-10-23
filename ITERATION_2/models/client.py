@@ -1,8 +1,11 @@
 class Client:
-    def __init__(self):
-        self.client_id = None
-        self.first_name = None
-        self.last_name = None
-        self.age = None
-        self.id = None
+    def __init__(self, client_id, first_name, last_name, age, id):
+        self.client_id = client_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.age = age
+        self.id = id
         self.trip = None
+
+    def add_trip(self):
+        pass

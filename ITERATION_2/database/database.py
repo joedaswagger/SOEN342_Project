@@ -41,7 +41,7 @@ class Database:
 
         client_table_query = """
             CREATE TABLE IF NOT EXISTS clients (
-                client_id TEXT PRIMARY KEY,
+                client_id INT PRIMARY KEY,
                 first_name TEXT,
                 last_name TEXT,
                 age INTEGER,
@@ -61,7 +61,7 @@ class Database:
     def insert_ticket(self, ticket: Ticket, trip: Trip):
         query = """
             INSERT INTO tickets (ticket_id, cost, route, date_issued, trip_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?)
         """
 
         cursor = self.connection.cursor()
@@ -71,44 +71,45 @@ class Database:
     def insert_trip(self, trip: Trip):
         query = """
             INSERT INTO trips (trip_id, trip_type, travelling_class, total_cost)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?)
         """
 
         cursor = self.connection.cursor()
         cursor.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.total_cost))
         self.connection.commit()
 
-    def insert_client(self, client: Client):
+    def insert_client(self, first_name, last_name, age, id):
         query = """
-            INSERT INTO clients (client_id, first_name, last_name, age, id, trip_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO clients (first_name, last_name, age, id, trip_id)
+            VALUES (?, ?, ?, ?, ?)
+            RETURNING *
         """
 
         cursor = self.connection.cursor()
-        cursor.execute(query, (client.client_id, client.first_name, client.last_name, client.age, client.id, client.trip.trip_id))
+        cursor.execute(query, (first_name, last_name, age, id, None))
+        inserted_client = cursor.fetchone()
         self.connection.commit()
+
+        return Client(inserted_client[0], inserted_client[1], inserted_client[2], inserted_client[3], inserted_client[4])
 
     def get_tickets_from_trip(self, trip_id):
         cursor = self.connection.cursor()
-        cursor.execute(f"SELECT * FROM tickets WHERE trip_id = {trip_id};")
+        cursor.execute("SELECT * FROM tickets WHERE trip_id = ?;", (trip_id))
         tickets = cursor.fetchall()
         return tickets
 
     def get_trip(self, trip_id):
         cursor = self.connection.cursor()
-        cursor.execute(f"SELECT * FROM trips WHERE trip_id = {trip_id};")
+        cursor.execute("SELECT * FROM trips WHERE trip_id = ?;", (trip_id))
         trip = cursor.fetchone()
         return trip
 
     def get_client(self, last_name, id):
         cursor = self.connection.cursor()
-        cursor.execute(f"SELECT * FROM clients WHERE last_name = {last_name} AND id = {id};")
+        cursor.execute("SELECT * FROM clients WHERE last_name = ? AND id = ?;", (last_name, id))
         client = cursor.fetchone()
-        return client
-
-    
-
-    # def show_all(self):
-    #     #Display all tickets.
-    #     cursor = self.conn.execute("SELECT * FROM tickets")
-    #     return cursor.fetchall()
+        
+        if client:
+            return Client(client[0], client[1], client[2], client[3], client[4])
+        else:
+            return None

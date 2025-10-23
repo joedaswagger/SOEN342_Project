@@ -12,7 +12,7 @@ def main():
     current_user = None
 
     while True:
-        menu = input("[MENU] Please select an operation:\n" \
+        menu = input("\n[MENU] Please select an operation:\n" \
             "1. Search for connections\n" \
             "2. Sort previous results\n" \
             "3. Authenticate yourself\n" \
@@ -27,19 +27,30 @@ def main():
                     planner.sort()
                 case 3:
                     while True:
+                        if current_user != None:
+                            print("\nYou are already athenticated.\n")
+                            break
+
                         auth_option = input("\nDo you already own an account? (y/n)")
                         if auth_option.strip().lower() == "y":
-                            current_user = auth.sign_in
+                            current_user = auth.sign_in()
+                            if current_user == None:
+                                print("\nInvalid credentials, continuing as guest.\n")
+                            else:
+                                print(F"\nWelcome back, {current_user.first_name} :)\n")
                             break
                         elif auth_option.strip().lower() == "n":
-                            current_user = auth.sign_up
+                            current_user = auth.sign_up()
+                            if current_user == None:
+                                print("\nSign up unsuccesful, continuing as guest.\n")
+                            else:
+                                print(F"\nWelcome, {current_user.first_name} :)\n")
                             break
                         else:
                             print("\nInvalid selection.")
                 case 4:
                     if (current_user == None):
                         print("\nYou must authenticate (menu-3) in order to book a trip.\n")
-                        break
                 case 5:
                     print("\nThank you for using our trip search algorithm!\n")
                     break
