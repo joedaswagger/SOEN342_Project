@@ -1,10 +1,10 @@
-from utils.route import Route
-from utils.TicketDB import Ticket_Database
+from models.route import Route
+from database.ticket_db import Ticket_Database
 
 class Trip_planner:
     foundSomething = True
     quitToMain = False
-    display = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Train Type", "Days of Operation", "First-Class Rate", "Second-Class Rate", "Trip Duration"]
+    
     def __init__(self, routes):
         self.routes = routes
         self.search_results = []

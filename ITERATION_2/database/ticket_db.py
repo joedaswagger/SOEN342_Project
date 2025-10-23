@@ -1,6 +1,6 @@
 import sqlite3
 import pickle
-from utils.Ticket import Ticket
+from models.ticket import Ticket
 
 class Ticket_Database:
 

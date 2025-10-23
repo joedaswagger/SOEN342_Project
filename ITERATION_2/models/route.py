@@ -37,5 +37,5 @@ class Route:
         self.trip_duration = (self.trip_duration_days * 24 * 60) + (self.trip_duration_hours * 60) + self.trip_duration_minutes
 
 
-    def print_self(self, count):
-        print(f"\n{str(count)}. {self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate} | Duration: {self.trip_duration_days} days, {self.trip_duration_hours} hours and {self.trip_duration_minutes} minutes")
+    def print_self(self, index):
+        print(f"\n{str(index)}. {self.train_type} from {self.departure_city}, {self.departure_time} to {self.arrival_city}, {self.arrival_time} | Available {self.days_of_operation} | First class: ${self.first_class_rate}, Second class: ${self.second_class_rate} | Duration: {self.trip_duration_days} days, {self.trip_duration_hours} hours and {self.trip_duration_minutes} minutes")
