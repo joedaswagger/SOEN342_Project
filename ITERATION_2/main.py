@@ -1,42 +1,52 @@
 from utils.route_parser import Route_parser
 from utils.trip_planner import Trip_planner
+from database.database import Database
+from utils.authenticator import Authenticator
 
-default_path = None
+def main():
+    parser = Route_parser(True)
+    planner = Trip_planner(parser.routes)
+    db = Database()
+    auth = Authenticator()
 
-while True:
-    default_input = input("Do you want to\n   1) Use our default CSV file\n   2) Select a CSV file\n")
-    try:
-        default_input = int(default_input)
-        if default_input == 1:
-            default_path = True
-            break
-        elif default_input == 2:
-            default_path = False
-            break
-        else:
-            print("\nPlease select between 1 and 2.\n")
-    except:
-        print("\nPlease input a numeric value.\n")
+    current_user = None
 
-parser = Route_parser(default_path)
-planner = Trip_planner(parser.routes)
+    while True:
+        menu = input("[MENU] Please select an operation:\n" \
+            "1. Search for connections\n" \
+            "2. Sort previous results\n" \
+            "3. Authenticate yourself\n" \
+            "4. Book a trip from previous results\n" \
+            "5. Exit\n")
+        
+        try:
+            match int(menu):
+                case 1:
+                    planner.search()
+                case 2:
+                    planner.sort()
+                case 3:
+                    while True:
+                        auth_option = input("\nDo you already own an account? (y/n)")
+                        if auth_option.strip().lower() == "y":
+                            current_user = auth.sign_in
+                            break
+                        elif auth_option.strip().lower() == "n":
+                            current_user = auth.sign_up
+                            break
+                        else:
+                            print("\nInvalid selection.")
+                case 4:
+                    if (current_user == None):
+                        print("\nYou must authenticate (menu-3) in order to book a trip.\n")
+                        break
+                case 5:
+                    print("\nThank you for using our trip search algorithm!\n")
+                    break
+                case _:
+                    print("\nPlease select an option from the menu\n")
+        except ValueError:
+            print("\nPlease enter a numerical selection\n")
 
-while True:
-    menu = input("\n[MENU] Please select an operation:\n" \
-        "1. Search connections\n" \
-        "2. Sort previous results\n" \
-        "3. Exit\n")
-    
-    try:
-        match int(menu):
-            case 1:
-                planner.search()
-            case 2:
-                planner.sort()
-            case 3:
-                print("\nThank you for using our trip search algorithm!\n")
-                break
-            case _:
-                print("\nPlease select an option from the menu\n")
-    except ValueError:
-        print("\nPlease enter a numerical selection\n")
+if __name__=="__main__":
+    main()
