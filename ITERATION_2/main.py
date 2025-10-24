@@ -6,7 +6,7 @@ from utils.authenticator import Authenticator
 def main():
     parser = Route_parser(True)
     db = Database()
-    planner = Trip_planner(parser.routes, db)
+    planner = Trip_planner(parser.routes)
     auth = Authenticator()
 
     current_user = None
@@ -51,6 +51,8 @@ def main():
                 case 4:
                     if (current_user == None):
                         print("\nYou must authenticate (menu-3) in order to book a trip.\n")
+                    else:
+                        planner.selection(current_user)
                 case 5:
                     print("\nThank you for using our trip search algorithm!\n")
                     break

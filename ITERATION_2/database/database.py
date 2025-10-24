@@ -12,7 +12,6 @@ class Database:
         self.create_tables()
     
     def connect(self):
-        print("\nDatabase connection instantiated succesfully.\n")
         return sqlite3.connect(self.database)
 
     def close_connection(self):
@@ -24,7 +23,9 @@ class Database:
                 trip_id TEXT PRIMARY KEY,
                 trip_type TEXT,
                 travelling_class TEXT,
-                total_cost REAL
+                total_cost REAL,
+                client_id INT,
+                FOREIGN KEY (client_id) REFERENCES clients (client_id)
             )
         """
 
@@ -46,17 +47,14 @@ class Database:
                 first_name TEXT,
                 last_name TEXT,
                 age INTEGER,
-                id TEXT,
-                trip_id TEXT,
-                FOREIGN KEY (trip_id) REFERENCES trips (trip_id)
-                UNIQUE(trip_id)
+                id TEXT
             )
         """
 
         cursor = self.connection.cursor()
+        cursor.execute(client_table_query)
         cursor.execute(trip_table_query)
         cursor.execute(ticket_table_query)
-        cursor.execute(client_table_query)
         self.connection.commit()
 
     def insert_ticket(self, ticket: Ticket, trip: Trip):
@@ -81,13 +79,13 @@ class Database:
 
     def insert_client(self, first_name, last_name, age, id):
         query = """
-            INSERT INTO clients (first_name, last_name, age, id, trip_id)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO clients (first_name, last_name, age, id)
+            VALUES (?, ?, ?, ?)
             RETURNING *
         """
 
         cursor = self.connection.cursor()
-        cursor.execute(query, (first_name, last_name, age, id, None))
+        cursor.execute(query, (first_name, last_name, age, id))
         inserted_client = cursor.fetchone()
         self.connection.commit()
 

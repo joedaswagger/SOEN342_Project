@@ -8,13 +8,13 @@ import random
 class Trip_planner:
     foundSomething = True
     
-    def __init__(self, routes, db):
+    def __init__(self, routes):
         self.routes = routes
         self.search_results = []
         self.search_results_one_stop = []
         self.search_results_two_stops = []
         self.counter = 5
-        self.db = db
+        self.db = Database()
         
 
     def search(self):
@@ -216,20 +216,20 @@ class Trip_planner:
 
         if len(self.search_results_two_stops) == 0 and len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo two-stop correspondance found.\n")
-        else:
-            while True: 
-                choiceNext = input("\nSelect option: \n" \
-                                    "1. Select a ticket to reserve \n"
-                                    "2. Cancel \n")
-                try:
-                    match int(choiceNext):
-                        case 1:
-                            self.selection()
-                        case 2:
-                            print("\nReturning to main menu")
-                            break
-                except ValueError:
-                    print("\nPlease enter a numerical value\n")
+        # else:
+        #     while True: 
+        #         choiceNext = input("\nSelect option: \n" \
+        #                             "1. Select a ticket to reserve \n"
+        #                             "2. Cancel \n")
+        #         try:
+        #             match int(choiceNext):
+        #                 case 1:
+        #                     self.selection()
+        #                 case 2:
+        #                     print("\nReturning to main menu")
+        #                     break
+        #         except ValueError:
+        #             print("\nPlease enter a numerical value\n")
 
     def sort(self):
         while True:
@@ -303,58 +303,75 @@ class Trip_planner:
         return f"(transfer time: {hours} hours and {minutes} minutes)"
     
         
-    def selection(self):
-
-        choice = input("\nSelect your ticket: ")
-
-        choice2 = input("\n Type 1 for First-class, Type 2 for Second-class ")
-
+    def selection(self, client: Client):
+        results = self.search_results if len(self.search_results) > 0 else (self.search_results_one_stop if len(self.search_results_one_stop) > 0 else self.search_results_two_stops)
+        if len(results) == 0:
+            print("\nNo connection found. Please search for connections before booking.\n")
+            return
         
+        connection_input = None
+        class_input = None
         while True:
-            if(0 < int(choice) <= len(self.search_results) or 0 < int(choice) <= len(self.search_results_one_stop) or 0 < int(choice) <= len(self.search_results_two_stops)): #checking for valid ID
-                firstName = input("\nEnter name: ")
-                lastName = input("\nEnter lastname:")
-                age = input("\nEnter age: ")
-                id = input("\nEnter ID: ")
+            try:
+                connection_input = int(input("\nEnter your preferred connection's index: "))
+                class_input = int(input("\nEnter 1 for first-class travel, 2 for second-class: "))
 
-                soloOrMore = input("\n Select option" \
-                "\n1. Travelling alone" \
-                "\n2. Travelling with others\n")
+                if connection_input < 1 or connection_input > len(results):
+                    print("Please select a connection from the search results' indexes.")
+                elif class_input not in [1, 2]:
+                    print("Please select from first-class (1) or second-class (2).")
+                else:
+                    break
+            except:
+                print("\nPlease input numerical values only.\n")
+        
+        tripID = random.randrange(100000, 1000000)
+        
+        travelling_class  = "first-class" if class_input == 1 else "second-class"
+        trip = Trip(tripID, "single", travelling_class, client.client_id)
+        ticket = Ticket(results[connection_input - 1], self.compute_connection_cost(connection_input - 1), client.first_name)
+        trip.add_ticket(ticket)
+        self.db.insert_ticket(ticket, trip)
 
-                
-                try:
-                    match int(soloOrMore):
-                        case 1:
-                            tripID = random.randrange(100000, 1000000)
-                            
-                            
-                            classInfo = self.classPartition(int(choice), int(choice2))
-                            ticket = Ticket(self.search_results[int(choice) - 1], classInfo[1], firstName + lastName)
-                            trip = Trip(tripID, ticket, "single", classInfo[0], classInfo[1])
+        while True:
+            carry_on = input("\nTrip created. Do you wish to add another member to trip (y/n): ")
 
-                            self.db.insert_client(firstName, lastName, age, id)
-                            self.db.insert_trip(trip)
-                            self.db.insert_ticket(ticket, trip)
-                            
-                            print("\nSuccess!")
-                            
-                        case 2:
-                            print("\nReturning to main menu")
-                            break
-                except ValueError:
-                    print("\nPlease enter a numerical value\n")
-    
+            if carry_on.lower() not in ["y", "n"]:
+                print("\nPlease select from options y/n\n")
+                continue
+            elif carry_on.lower() == "n":
+                print("\nTrip created. Going back to main menu...\n")
+                break
 
-    def classPartition(self, choice, choice2):
-        chosen_ticket = self.search_results[choice - 1]
+            assigned_name = input("\nEnter the new member's first name: ")
+            new_ticket = ticket = Ticket(results[connection_input - 1], self.compute_connection_cost(connection_input - 1), assigned_name)
+            trip.add_ticket(new_ticket)
+            trip.set_trip_type("group")
 
-        if choice2 == 1:
-            class_info = ("first", chosen_ticket.first_class_rate)
-        elif choice2 == 2:
-            class_info = ("second", chosen_ticket.second_class_rate)
-        else:
-            print("invalid entry")
+        self.db.insert_trip(trip)
+        
+        print("\nSuccess!")
+        
+            #     case 2:
+            #         print("\nReturning to main menu")
+            #         break
+            # except ValueError:
+            #     print("\nPlease enter a numerical value\n")
 
-        return class_info
+
+    # def class_partition(self, selection):
+    #     chosen_ticket = self.search_results[choice - 1]
+
+    #     if choice2 == 1:
+    #         class_info = ("first", chosen_ticket.first_class_rate)
+    #     elif choice2 == 2:
+    #         class_info = ("second", chosen_ticket.second_class_rate)
+    #     else:
+    #         print("invalid entry")
+
+    #     return class_info
+
+    def compute_connection_cost(self, connection_index):
+        return 0
  
 
