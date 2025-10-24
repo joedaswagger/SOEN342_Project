@@ -66,7 +66,7 @@ class Database:
         """
 
         cursor = self.connection.cursor()
-        cursor.execute(query, (ticket.ticket_id, ticket.cost, ticket.route, ticket.date_issued, trip.trip_id))
+        cursor.execute(query, (ticket.ticket_id, ticket.cost, ticket.route, ticket.date_issued, trip.trip_id, ticket.assigned_name))
         self.connection.commit()
 
     def insert_trip(self, trip: Trip):

@@ -5,8 +5,8 @@ from utils.authenticator import Authenticator
 
 def main():
     parser = Route_parser(True)
-    planner = Trip_planner(parser.routes)
     db = Database()
+    planner = Trip_planner(parser.routes, db)
     auth = Authenticator()
 
     current_user = None

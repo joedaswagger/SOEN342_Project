@@ -1,15 +1,21 @@
 from models.route import Route
 from database.database import Database
+from models.trip import Trip
+from models.client import Client
+from models.ticket import Ticket
+import random
 
 class Trip_planner:
     foundSomething = True
     
-    def __init__(self, routes):
+    def __init__(self, routes, db):
         self.routes = routes
         self.search_results = []
         self.search_results_one_stop = []
         self.search_results_two_stops = []
         self.counter = 5
+        self.db = db
+        
 
     def search(self):
         while True:
@@ -301,29 +307,54 @@ class Trip_planner:
 
         choice = input("\nSelect your ticket: ")
 
-        counter = 0
+        choice2 = input("\n Type 1 for First-class, Type 2 for Second-class ")
+
         
         while True:
             if(0 < int(choice) <= len(self.search_results) or 0 < int(choice) <= len(self.search_results_one_stop) or 0 < int(choice) <= len(self.search_results_two_stops)): #checking for valid ID
-                name = input("\nEnter name: ")
+                firstName = input("\nEnter name: ")
+                lastName = input("\nEnter lastname:")
                 age = input("\nEnter age: ")
                 id = input("\nEnter ID: ")
 
                 soloOrMore = input("\n Select option" \
                 "\n1. Travelling alone" \
-                "\n2. Travelling with others")
+                "\n2. Travelling with others\n")
 
                 
                 try:
                     match int(soloOrMore):
                         case 1:
-                            t1 = (name, age, id, self.search_results[int(choice) - 1].route_id, "single") #Can't get database to work. (The way multiple reservations are defined in Ticket class needs fixing)
-                            Ticket_Database.database(t1)
+                            tripID = random.randrange(100000, 1000000)
+                            
+                            
+                            classInfo = self.classPartition(int(choice), int(choice2))
+                            ticket = Ticket(self.search_results[int(choice) - 1], classInfo[1], firstName + lastName)
+                            trip = Trip(tripID, ticket, "single", classInfo[0], classInfo[1])
+
+                            self.db.insert_client(firstName, lastName, age, id)
+                            self.db.insert_trip(trip)
+                            self.db.insert_ticket(ticket, trip)
+                            
+                            print("\nSuccess!")
+                            
                         case 2:
                             print("\nReturning to main menu")
                             break
                 except ValueError:
                     print("\nPlease enter a numerical value\n")
-                    
+    
+
+    def classPartition(self, choice, choice2):
+        chosen_ticket = self.search_results[choice - 1]
+
+        if choice2 == 1:
+            class_info = ("first", chosen_ticket.first_class_rate)
+        elif choice2 == 2:
+            class_info = ("second", chosen_ticket.second_class_rate)
+        else:
+            print("invalid entry")
+
+        return class_info
  
 
