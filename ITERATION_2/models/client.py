@@ -5,7 +5,7 @@ class Client:
         self.last_name = last_name
         self.age = age
         self.id = id
-        self.trip = None
+        self.trip_id = None
 
     def add_trip(self):
         pass
