@@ -1,6 +1,9 @@
 from models.route import Route
 from database.database import Database
 from models.trip import Trip
+from models.client import Client
+from models.ticket import Ticket
+import random
 
 class Trip_planner:
     foundSomething = True
@@ -12,6 +15,7 @@ class Trip_planner:
         self.search_results_two_stops = []
         self.counter = 5
         self.db = db
+        
 
     def search(self):
         while True:
@@ -303,7 +307,7 @@ class Trip_planner:
 
         choice = input("\nSelect your ticket: ")
 
-        choice2 = input("\n Type 1 for First-class, Type 2 for Second-class")
+        choice2 = input("\n Type 1 for First-class, Type 2 for Second-class ")
 
         
         while True:
@@ -315,15 +319,24 @@ class Trip_planner:
 
                 soloOrMore = input("\n Select option" \
                 "\n1. Travelling alone" \
-                "\n2. Travelling with others")
+                "\n2. Travelling with others\n")
 
                 
                 try:
                     match int(soloOrMore):
                         case 1:
+                            tripID = random.randrange(100000, 1000000)
                             
-                            t1 = (firstName, lastName, age, id) #Can't get database to work. (The way multiple reservations are defined in Ticket class needs fixing)
+                            
+                            classInfo = self.classPartition(int(choice), int(choice2))
+                            ticket = Ticket(self.search_results[int(choice) - 1], classInfo[1], firstName + lastName)
+                            trip = Trip(tripID, ticket, "single", classInfo[0], classInfo[1])
+
                             self.db.insert_client(firstName, lastName, age, id)
+                            self.db.insert_trip(trip)
+                            self.db.insert_ticket(ticket, trip)
+                            
+                            print("\nSuccess!")
                             
                         case 2:
                             print("\nReturning to main menu")
