@@ -346,11 +346,10 @@ class Trip_planner:
             assigned_name = input("\nEnter the new member's first name: ")
             new_ticket = ticket = Ticket(results[connection_input - 1], self.compute_connection_cost(connection_input - 1), assigned_name)
             trip.add_ticket(new_ticket)
+            self.db.insert_ticket(new_ticket, trip)
             trip.set_trip_type("group")
 
         self.db.insert_trip(trip)
-        
-        print("\nSuccess!")
         
             #     case 2:
             #         print("\nReturning to main menu")
