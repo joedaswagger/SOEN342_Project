@@ -43,7 +43,7 @@ class Database:
 
         client_table_query = """
             CREATE TABLE IF NOT EXISTS clients (
-                client_id INT PRIMARY KEY,
+                client_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 first_name TEXT,
                 last_name TEXT,
                 age INTEGER,
@@ -69,12 +69,12 @@ class Database:
 
     def insert_trip(self, trip: Trip):
         query = """
-            INSERT INTO trips (trip_id, trip_type, travelling_class, total_cost)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO trips (trip_id, trip_type, travelling_class, total_cost, client_id)
+            VALUES (?, ?, ?, ?, ?)
         """
 
         cursor = self.connection.cursor()
-        cursor.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.total_cost))
+        cursor.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.total_cost, trip.client_id))
         self.connection.commit()
 
     def insert_client(self, first_name, last_name, age, id):
