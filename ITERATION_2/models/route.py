@@ -1,6 +1,6 @@
 class Route:
-    def __init__(self, __route_id, departure_city, arrival_city, departure_time, arrival_time, train_type, days_of_operation, first_class_rate, second_class_rate):
-        self.route_id = __route_id
+    def __init__(self, route_id, departure_city, arrival_city, departure_time, arrival_time, train_type, days_of_operation, first_class_rate, second_class_rate):
+        self.route_id = route_id
         self.departure_city = departure_city
         self.arrival_city = arrival_city
         self.departure_time = departure_time
@@ -13,8 +13,6 @@ class Route:
         self.trip_duration_days = 0
         self.trip_duration_hours = 0
         self.trip_duration_minutes = 0
-
-        
 
     def calculate_duration(self):
         departure_time_values = self.departure_time.split(':')

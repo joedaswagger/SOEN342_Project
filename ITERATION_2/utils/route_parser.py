@@ -1,6 +1,6 @@
 import csv
 import os
-from utils.route import Route
+from models.route import Route
 import tkinter as tk
 from tkinter import filedialog
 
