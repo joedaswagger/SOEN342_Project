@@ -15,5 +15,8 @@ class Trip:
     def set_trip_type(self, type):
         self.trip_type = type
 
+    def set_total_cost(self, counter):
+        self.total_cost = (float(self.total_cost) / (counter - 1)) * counter
+
     def print_self(self):
         print(f"\nTRIP {self.trip_id} | TRAVELLING '{self.travelling_class}' | TOTAL COST OF ${self.total_cost}")
