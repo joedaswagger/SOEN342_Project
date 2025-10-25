@@ -216,20 +216,6 @@ class Trip_planner:
 
         if len(self.search_results_two_stops) == 0 and len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo two-stop correspondance found.\n")
-        # else:
-        #     while True: 
-        #         choiceNext = input("\nSelect option: \n" \
-        #                             "1. Select a ticket to reserve \n"
-        #                             "2. Cancel \n")
-        #         try:
-        #             match int(choiceNext):
-        #                 case 1:
-        #                     self.selection()
-        #                 case 2:
-        #                     print("\nReturning to main menu")
-        #                     break
-        #         except ValueError:
-        #             print("\nPlease enter a numerical value\n")
 
     def sort(self):
         while True:
@@ -326,10 +312,10 @@ class Trip_planner:
                 print("\nPlease input numerical values only.\n")
         
         tripID = random.randrange(100000, 1000000)
-        counterPeople = 1
+        counter_people = 1
         travelling_class  = "first-class" if class_input == 1 else "second-class"
-        trip = Trip(tripID, "single", travelling_class, self.compute_connection_cost(connection_input - 1, class_input), client.client_id)
-        ticket = Ticket(results[connection_input - 1], self.compute_connection_cost(connection_input - 1, class_input), client.first_name)
+        trip = Trip(tripID, "single", travelling_class, client.client_id, self.compute_connection_cost(connection_input - 1, class_input))
+        ticket = Ticket(None, results[connection_input - 1], self.compute_connection_cost(connection_input - 1, class_input), None, client.first_name)
         trip.add_ticket(ticket)
         self.db.insert_ticket(ticket, trip)
 
@@ -342,16 +328,16 @@ class Trip_planner:
                 print("\nPlease select from options y/n\n")
                 continue
             elif carry_on.lower() == "n":
-                print("\nTrip created. Going back to main menu...\n")
+                print("\nTrip stored. Going back to main menu...\n")
                 break
             
-            counterPeople += 1
+            counter_people += 1
             assigned_name = input("\nEnter the new member's first name: ")
-            new_ticket = ticket = Ticket(results[connection_input - 1], self.compute_connection_cost(connection_input - 1, class_input), assigned_name)
+            new_ticket = ticket = Ticket(None, results[connection_input - 1], self.compute_connection_cost(connection_input - 1, class_input), None, assigned_name)
             trip.add_ticket(new_ticket)
             self.db.insert_ticket(new_ticket, trip)
             trip.set_trip_type("group")
-            trip.set_total_cost(counterPeople)
+            trip.set_total_cost(counter_people)
 
         self.db.insert_trip(trip)
         
@@ -390,9 +376,9 @@ class Trip_planner:
             route1 = resultOneSum.get("initial")
             route2 = resultOneSum.get("final")
             if(class_input == 1):
-                total = int(route1.first_class_rate) + int(route2.first_class_rate)
+                total = float(route1.first_class_rate) + float(route2.first_class_rate)
             elif (class_input == 2):
-                total = int(route1.second_class_rate) + int(route2.second_class_rate)
+                total = float(route1.second_class_rate) + float(route2.second_class_rate)
 
         elif(len(self.search_results_two_stops) != 0):
             resultTwoStops = self.search_results_two_stops[connection_index]
@@ -402,10 +388,8 @@ class Trip_planner:
             route3= resultTwoStops.get("final")
 
             if(class_input == 1):
-                total = int(route1.first_class_rate) + int(route2.first_class_rate) + int(route3.first_class_rate)
+                total = float(route1.first_class_rate) + float(route2.first_class_rate) + float(route3.first_class_rate)
             elif (class_input == 2):
-                total = int(route1.second_class_rate) + int(route2.second_class_rate) + int(route3.second_class_rate)
+                total = float(route1.second_class_rate) + float(route2.second_class_rate) + float(route3.second_class_rate)
 
         return total
- 
-

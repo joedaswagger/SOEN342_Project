@@ -1,7 +1,7 @@
 from models.ticket import Ticket
 
 class Trip:
-    def __init__(self, trip_id, trip_type, travelling_class, total_cost, client_id):
+    def __init__(self, trip_id, trip_type, travelling_class, client_id, total_cost=0):
         self.trip_id = trip_id
         self.tickets = []
         self.trip_type = trip_type
@@ -16,4 +16,7 @@ class Trip:
         self.trip_type = type
 
     def set_total_cost(self, counter):
-        self.total_cost *= counter
+        self.total_cost = (float(self.total_cost) / (counter - 1)) * counter
+
+    def print_self(self):
+        print(f"\nTRIP {self.trip_id} | TRAVELLING '{self.travelling_class}' | TOTAL COST OF ${self.total_cost}")

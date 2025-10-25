@@ -93,15 +93,15 @@ class Database:
 
     def get_tickets_from_trip(self, trip_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM tickets WHERE trip_id = ?;", (trip_id))
+        cursor.execute("SELECT * FROM tickets WHERE trip_id = ?;", (trip_id,))
         tickets = cursor.fetchall()
         return tickets
 
-    def get_trip(self, trip_id):
+    def get_trips_from_client(self, client_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM trips WHERE trip_id = ?;", (trip_id))
-        trip = cursor.fetchone()
-        return trip
+        cursor.execute("SELECT * FROM trips WHERE client_id = ?;", (client_id,))
+        trips = cursor.fetchall()
+        return trips
 
     def get_client(self, last_name, id):
         cursor = self.connection.cursor()
