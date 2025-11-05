@@ -23,6 +23,7 @@ class Database:
                 trip_id TEXT PRIMARY KEY,
                 trip_type TEXT,
                 travelling_class TEXT,
+                travel_date TEXT,
                 total_cost REAL,
                 client_id INT,
                 FOREIGN KEY (client_id) REFERENCES clients (client_id)
@@ -69,12 +70,12 @@ class Database:
 
     def insert_trip(self, trip: Trip):
         query = """
-            INSERT INTO trips (trip_id, trip_type, travelling_class, total_cost, client_id)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO trips (trip_id, trip_type, travelling_class, travel_date, total_cost, client_id)
+            VALUES (?, ?, ?, ?, ?, ?)
         """
 
         cursor = self.connection.cursor()
-        cursor.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.total_cost, trip.client_id))
+        cursor.execute(query, (trip.trip_id, trip.trip_type, trip.travelling_class, trip.travel_date.strftime("%B %d, %Y"), trip.total_cost, trip.client_id))
         self.connection.commit()
 
     def insert_client(self, first_name, last_name, age, id):

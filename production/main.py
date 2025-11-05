@@ -18,7 +18,7 @@ def main():
             "2. Sort previous results\n" \
             "3. Authenticate yourself\n" \
             "4. Book a trip from previous results\n" \
-            "5. View trip history\n" \
+            "5. View booked trips\n" \
             "6. Exit\n")
         
         try:
@@ -58,9 +58,12 @@ def main():
                 case 5:
                     if (current_user == None):
                         print("\nYou must authenticate (menu-3) in order to view trip history.\n")
+                    else:
+                        past_input = input("\nDo you wish to view past (enter 'p') or current (any input) trips: ")
+                        past = True if past_input.lower() == "p" else False
 
-                    history = History(current_user)
-                    history.display_trips()
+                        history = History(current_user)
+                        history.display_trips(past)
                 case 6:
                     print("\nThank you for using our trip search algorithm!\n")
                     break

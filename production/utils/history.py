@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from database.database import Database
 from models.client import Client
 from models.trip import Trip
@@ -9,23 +10,33 @@ class History:
         self.client = client
         self.db = Database()
 
-    def display_trips(self):
+    def display_trips(self, past):
         trips = self.db.get_trips_from_client(int(self.client.client_id))
+        counter = 0
         for trip_record in trips:
-            trip = Trip(trip_record[0], trip_record[1], trip_record[2], trip_record[4], trip_record[3])
-            trip.print_self()
-            connection = None
-            
-            tickets = self.db.get_tickets_from_trip(trip.trip_id)
-            for ticket_record in tickets:
-                ticket = Ticket(ticket_record[0], ticket_record[2], ticket_record[1], ticket_record[3], ticket_record[5])
-                ticket.print_self()
-                connection = json.loads(ticket.route)
-                connection = json.loads(connection)
-            self.print_connection(connection)
+            trip = Trip(trip_record[0], trip_record[1], trip_record[2], trip_record[5], trip_record[3], trip_record[4])
+
+            today = date.today()
+            travel_date = datetime.strptime(trip.travel_date, "%B %d, %Y").date()
+
+            if (past == True and travel_date < today) or (past == False and travel_date >= today):
+                counter += 1
+                trip.print_self()
+                connection = None
+                
+                tickets = self.db.get_tickets_from_trip(trip.trip_id)
+                for ticket_record in tickets:
+                    ticket = Ticket(ticket_record[0], ticket_record[2], ticket_record[1], ticket_record[3], ticket_record[5])
+                    ticket.print_self()
+                    connection = json.loads(ticket.route)
+                    connection = json.loads(connection)
+                self.print_connection(connection)
+
+        if counter == 0:
+            print("\nNo trips found.")
 
     def print_connection(self, connection):
-        print("\n     CONNECTION")\
+        print("\n     CONNECTION:")\
         
         if "initial" in connection:
             print(f"\n     {connection["initial"]["train_type"]} from {connection["initial"]["departure_city"]}, {connection["initial"]["departure_time"]} to {connection["initial"]["arrival_city"]}, {connection["initial"]["arrival_time"]} | Available {connection["initial"]["days_of_operation"]} | First class: ${connection["initial"]["first_class_rate"]}, Second class: ${connection["initial"]["second_class_rate"]} | Duration: {connection["initial"]["trip_duration_days"]} days, {connection["initial"]["trip_duration_hours"]} hours and {connection["initial"]["trip_duration_minutes"]} minutes")
