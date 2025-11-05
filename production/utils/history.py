@@ -12,7 +12,7 @@ class History:
     def display_trips(self):
         trips = self.db.get_trips_from_client(int(self.client.client_id))
         for trip_record in trips:
-            trip = Trip(trip_record[0], trip_record[1], trip_record[2], trip_record[4], trip_record[3])
+            trip = Trip(trip_record[0], trip_record[1], trip_record[2], trip_record[5], trip_record[3], trip_record[4])
             trip.print_self()
             connection = None
             
@@ -25,7 +25,7 @@ class History:
             self.print_connection(connection)
 
     def print_connection(self, connection):
-        print("\n     CONNECTION")\
+        print("\n     CONNECTION:")\
         
         if "initial" in connection:
             print(f"\n     {connection["initial"]["train_type"]} from {connection["initial"]["departure_city"]}, {connection["initial"]["departure_time"]} to {connection["initial"]["arrival_city"]}, {connection["initial"]["arrival_time"]} | Available {connection["initial"]["days_of_operation"]} | First class: ${connection["initial"]["first_class_rate"]}, Second class: ${connection["initial"]["second_class_rate"]} | Duration: {connection["initial"]["trip_duration_days"]} days, {connection["initial"]["trip_duration_hours"]} hours and {connection["initial"]["trip_duration_minutes"]} minutes")

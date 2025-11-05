@@ -1,3 +1,4 @@
+from datetime import date
 from models.route import Route
 from database.database import Database
 from models.trip import Trip
@@ -125,11 +126,12 @@ class Trip_planner:
 
                         while True:
                             try:
+                                print("\n")
                                 for i, t in enumerate(days_of_operation, start=1):
                                     print(f"{i}. {t}")
                                 print("\n ")
 
-                                day_seletion = int(input("\nSelect a travel day by index: "))
+                                day_seletion = int(input("Select a travel day by index: "))
 
                                 if day_seletion < 1 or day_seletion > 7:
                                     print("\nPlease enter a value from 1 to 7\n")
@@ -310,11 +312,13 @@ class Trip_planner:
                     break
             except:
                 print("\nPlease input numerical values only.\n")
+
+        travel_date = self.select_date()
         
         tripID = random.randrange(100000, 1000000)
         counter_people = 1
         travelling_class  = "first-class" if class_input == 1 else "second-class"
-        trip = Trip(tripID, "single", travelling_class, client.client_id, self.compute_connection_cost(connection_input - 1, class_input))
+        trip = Trip(tripID, "single", travelling_class, client.client_id, travel_date, self.compute_connection_cost(connection_input - 1, class_input))
         ticket = Ticket(None, results[connection_input - 1], self.compute_connection_cost(connection_input - 1, class_input), None, client.first_name)
         trip.add_ticket(ticket)
         self.db.insert_ticket(ticket, trip)
@@ -340,25 +344,6 @@ class Trip_planner:
             trip.set_total_cost(counter_people)
 
         self.db.insert_trip(trip)
-        
-            #     case 2:
-            #         print("\nReturning to main menu")
-            #         break
-            # except ValueError:
-            #     print("\nPlease enter a numerical value\n")
-
-
-    # def class_partition(self, selection):
-    #     chosen_ticket = self.search_results[choice - 1]
-
-    #     if choice2 == 1:
-    #         class_info = ("first", chosen_ticket.first_class_rate)
-    #     elif choice2 == 2:
-    #         class_info = ("second", chosen_ticket.second_class_rate)
-    #     else:
-    #         print("invalid entry")
-
-    #     return class_info
 
     def compute_connection_cost(self, connection_index, class_input):
         total = 0
@@ -393,3 +378,33 @@ class Trip_planner:
                 total = float(route1.second_class_rate) + float(route2.second_class_rate) + float(route3.second_class_rate)
 
         return total
+    
+    def select_date(self):
+        while True:
+            try:
+                year = int(input("\nSelect travel year (2025 - 2026): "))
+                month = int(input("\nSelect travel month (1 - 12): "))
+                max_day = 28
+                if month in [1, 3, 5, 7, 8, 10, 12]:
+                    max_day = 31
+                elif month in [4, 6, 9, 11]:
+                    max_day = 30
+                day = int(input(f"\nSelect travel day (1 - {max_day}): "))
+
+                if year not in range(2025, 2027):
+                    print("\nYear is out of range; please select a date from this year or next year.")
+                elif month not in range(1, 13):
+                    print("\nMonth out or range; please select a month from 1 to 12, inclusively.")
+                elif day not in range(1, (max_day + 1)):
+                    print("\nDay out of range, please try again.")
+                else:
+                    travel_date = date(year, month, day)
+                    today = date.today()
+
+                    if today > travel_date:
+                        print("\nYou are not allowed to travel in the past; please try again.")
+                        continue
+
+                    return travel_date
+            except:
+                print("\nPlease input numerical values only.")
