@@ -2,7 +2,6 @@ from models.ticket import Ticket
 
 class Trip:
     def __init__(self, trip_id, trip_type, travelling_class, client_id, travel_date, total_cost=0):
-        print(total_cost)
         self.trip_id = trip_id
         self.tickets = []
         self.trip_type = trip_type
