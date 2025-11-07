@@ -25,6 +25,7 @@ def main():
             match int(menu):
                 case 1:
                     planner.search()
+                    print("\n\n[ We filtered out connections that have a layover time above 2 hours (9-5) or above 30 minutes after hours. ]")
                 case 2:
                     planner.sort()
                 case 3:
