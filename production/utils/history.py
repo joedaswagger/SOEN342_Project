@@ -36,18 +36,41 @@ class History:
             print("\nNo trips found.")
 
     def print_connection(self, connection):
-        print("\n     CONNECTION:")\
-        
-        if "initial" in connection:
-            print(f"\n     {connection["initial"]["train_type"]} from {connection["initial"]["departure_city"]}, {connection["initial"]["departure_time"]} to {connection["initial"]["arrival_city"]}, {connection["initial"]["arrival_time"]} | Available {connection["initial"]["days_of_operation"]} | First class: ${connection["initial"]["first_class_rate"]}, Second class: ${connection["initial"]["second_class_rate"]} | Duration: {connection["initial"]["trip_duration_days"]} days, {connection["initial"]["trip_duration_hours"]} hours and {connection["initial"]["trip_duration_minutes"]} minutes")
+        print("\n     CONNECTION:")
 
-            
+        if "initial" in connection:
+            print(
+                f"\n     {connection['initial']['train_type']} from {connection['initial']['departure_city']}, {connection['initial']['departure_time']} "
+                f"to {connection['initial']['arrival_city']}, {connection['initial']['arrival_time']} | Available {connection['initial']['days_of_operation']} "
+                f"| First class: ${connection['initial']['first_class_rate']}, Second class: ${connection['initial']['second_class_rate']} "
+                f"| Duration: {connection['initial']['trip_duration_days']} days, {connection['initial']['trip_duration_hours']} hours and "
+                f"{connection['initial']['trip_duration_minutes']} minutes"
+            )
+
             if "middle" in connection:
                 print("\n     CORRESPONDING WITH")
-                print(f"\n     {connection["middle"]["train_type"]} from {connection["middle"]["departure_city"]}, {connection["middle"]["departure_time"]} to {connection["middle"]["arrival_city"]}, {connection["middle"]["arrival_time"]} | Available {connection["middle"]["days_of_operation"]} | First class: ${connection["middle"]["first_class_rate"]}, Second class: ${connection["middle"]["second_class_rate"]} | Duration: {connection["middle"]["trip_duration_days"]} days, {connection["middle"]["trip_duration_hours"]} hours and {connection["middle"]["trip_duration_minutes"]} minutes")
-            
+                print(
+                    f"\n     {connection['middle']['train_type']} from {connection['middle']['departure_city']}, {connection['middle']['departure_time']} "
+                    f"to {connection['middle']['arrival_city']}, {connection['middle']['arrival_time']} | Available {connection['middle']['days_of_operation']} "
+                    f"| First class: ${connection['middle']['first_class_rate']}, Second class: ${connection['middle']['second_class_rate']} "
+                    f"| Duration: {connection['middle']['trip_duration_days']} days, {connection['middle']['trip_duration_hours']} hours and "
+                    f"{connection['middle']['trip_duration_minutes']} minutes"
+                )
+
             print("\n     CORRESPONDING WITH")
-            print(f"\n     {connection["final"]["train_type"]} from {connection["final"]["departure_city"]}, {connection["final"]["departure_time"]} to {connection["final"]["arrival_city"]}, {connection["final"]["arrival_time"]} | Available {connection["final"]["days_of_operation"]} | First class: ${connection["final"]["first_class_rate"]}, Second class: ${connection["final"]["second_class_rate"]} | Duration: {connection["final"]["trip_duration_days"]} days, {connection["final"]["trip_duration_hours"]} hours and {connection["final"]["trip_duration_minutes"]} minutes")
+            print(
+                f"\n     {connection['final']['train_type']} from {connection['final']['departure_city']}, {connection['final']['departure_time']} "
+                f"to {connection['final']['arrival_city']}, {connection['final']['arrival_time']} | Available {connection['final']['days_of_operation']} "
+                f"| First class: ${connection['final']['first_class_rate']}, Second class: ${connection['final']['second_class_rate']} "
+                f"| Duration: {connection['final']['trip_duration_days']} days, {connection['final']['trip_duration_hours']} hours and "
+                f"{connection['final']['trip_duration_minutes']} minutes"
+            )
+
         else:
-            pass
-            print(f"\n     {connection["train_type"]} from {connection["departure_city"]}, {connection["departure_time"]} to {connection["arrival_city"]}, {connection["arrival_time"]} | Available {connection["days_of_operation"]} | First class: ${connection["first_class_rate"]}, Second class: ${connection["second_class_rate"]} | Duration: {connection["trip_duration_days"]} days, {connection["trip_duration_hours"]} hours and {connection["trip_duration_minutes"]} minutes")
+            print(
+                f"\n     {connection['train_type']} from {connection['departure_city']}, {connection['departure_time']} "
+                f"to {connection['arrival_city']}, {connection['arrival_time']} | Available {connection['days_of_operation']} "
+                f"| First class: ${connection['first_class_rate']}, Second class: ${connection['second_class_rate']} "
+                f"| Duration: {connection['trip_duration_days']} days, {connection['trip_duration_hours']} hours and "
+                f"{connection['trip_duration_minutes']} minutes"
+            )

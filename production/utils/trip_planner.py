@@ -7,7 +7,7 @@ from models.ticket import Ticket
 import random
 
 class Trip_planner:
-    foundSomething = True
+    filterTrigger = False
     
     def __init__(self, routes):
         self.routes = routes
@@ -196,6 +196,8 @@ class Trip_planner:
             print("\nNo connection found; generating one-stop correspondances...\n")
 
             for route in self.search_results_one_stop:
+                if route["transfer_time"] == None:
+                    continue
                 counter += 1
                 
                 route["initial"].print_self(counter)
@@ -207,6 +209,10 @@ class Trip_planner:
             print("\nNo one-stop correspondance found; generating two-stops correspondances...\n")
 
             for route in self.search_results_two_stops:
+                if route["transfer_time1"] == None or route["transfer_time2"] == None:
+                    continue
+
+
                 counter += 1
                 
                 route["initial"].print_self(counter)
@@ -287,8 +293,13 @@ class Trip_planner:
         if minutes < 1:
             hours = hours - 1
             minutes = 60 + minutes
+        
+        self.filterPolicy(minutes, hours, start_time_values)
 
-        return f"(transfer time: {hours} hours and {minutes} minutes)"
+        if self.filterTrigger == True:
+            return None
+        else: 
+            return f"(transfer time: {hours} hours and {minutes} minutes)"
     
         
     def selection(self, client: Client):
@@ -408,3 +419,23 @@ class Trip_planner:
                     return travel_date
             except:
                 print("\nPlease input numerical values only.")
+    
+
+    def filterPolicy(self, minutes, hours, arrivalTime): #If policy is not met, filterTrigger is set to True, which prevents the connection from printing in print_self() function
+
+        self.filterTrigger = False #No filter triggered at first
+        if int(arrivalTime[0]) < 17 and int(arrivalTime[0]) >= 9: #Defining hours as 9-5 and after hours as anything outside it
+            if hours >= 2: # If layover takes more than 2h
+                self.filterTrigger = True
+        if int(arrivalTime[0]) >= 17 and int(arrivalTime[0]) < 9:
+            if hours > 0 or (hours == 0 and minutes > 30): #If more than one hour or 0 hours and more than 30 minutes
+                self.filterTrigger = True
+
+
+
+
+
+
+        
+
+            
