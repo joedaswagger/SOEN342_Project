@@ -15,7 +15,7 @@ class Ticket:
         return str(uuid.uuid4())[:8].upper()
     
     def print_self(self):
-        print(f"\n     TICKET {self.ticket_id} FOR {self.assigned_name} | TRAVEL ON {self.date_issued} | COST OF ${self.cost}")
+        print(f"\n     TICKET {self.ticket_id} FOR {self.assigned_name} | BOOKED ON {self.date_issued} | COST OF ${self.cost}")
 
 class jsonEncoder(JSONEncoder):
     def default(self, o):

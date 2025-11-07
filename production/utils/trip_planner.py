@@ -1,13 +1,22 @@
-from utils.route import Route
+from datetime import date
+from models.route import Route
+from database.database import Database
+from models.trip import Trip
+from models.client import Client
+from models.ticket import Ticket
+import random
 
 class Trip_planner:
-    display = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Train Type", "Days of Operation", "First-Class Rate", "Second-Class Rate", "Trip Duration"]
+    filterTrigger = False
+    
     def __init__(self, routes):
         self.routes = routes
         self.search_results = []
         self.search_results_one_stop = []
         self.search_results_two_stops = []
         self.counter = 5
+        self.db = Database()
+        
 
     def search(self):
         while True:
@@ -117,11 +126,12 @@ class Trip_planner:
 
                         while True:
                             try:
+                                print("\n")
                                 for i, t in enumerate(days_of_operation, start=1):
                                     print(f"{i}. {t}")
                                 print("\n ")
 
-                                day_seletion = int(input("\nSelect a travel day by index: "))
+                                day_seletion = int(input("Select a travel day by index: "))
 
                                 if day_seletion < 1 or day_seletion > 7:
                                     print("\nPlease enter a value from 1 to 7\n")
@@ -162,6 +172,7 @@ class Trip_planner:
                                 print("\nPlease enter a numerical value\n")
                     case 8:
                         print("\nReturning to main menu\n")
+                        break
                     case _:
                         print("\nPlease select a number from 1 to 9\n")
             except ValueError:
@@ -174,28 +185,41 @@ class Trip_planner:
 
         print("\n" + str(len(self.search_results)) + " connections found for the search criteria.\n")
 
+        counter = 0
+
         for route in self.search_results:
-            route.print_self()
+            counter += 1
+            route.print_self(counter)
             print("____________________________________")
 
         if len(self.search_results) == 0:
             print("\nNo connection found; generating one-stop correspondances...\n")
 
             for route in self.search_results_one_stop:
-                route["initial"].print_self()
+                if route["transfer_time"] == None:
+                    continue
+                counter += 1
+                
+                route["initial"].print_self(counter)
                 print("\nCORRESPONDING WITH " + route["transfer_time"])
-                route["final"].print_self()
+                route["final"].print_self(counter)
                 print("____________________________________")
 
         if len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
             print("\nNo one-stop correspondance found; generating two-stops correspondances...\n")
 
             for route in self.search_results_two_stops:
-                route["initial"].print_self()
+                if route["transfer_time1"] == None or route["transfer_time2"] == None:
+                    continue
+
+
+                counter += 1
+                
+                route["initial"].print_self(counter)
                 print("\nCORRESPONDING WITH " + route["transfer_time1"])
-                route["middle"].print_self()
+                route["middle"].print_self(counter)
                 print("\nCORRESPONDING WITH " + route["transfer_time2"])
-                route["final"].print_self()
+                route["final"].print_self(counter)
                 print("____________________________________")
 
         if len(self.search_results_two_stops) == 0 and len(self.search_results_one_stop) == 0 and len(self.search_results) == 0:
@@ -269,5 +293,149 @@ class Trip_planner:
         if minutes < 1:
             hours = hours - 1
             minutes = 60 + minutes
+        
+        self.filterPolicy(minutes, hours, start_time_values)
 
-        return f"(transfer time: {hours} hours and {minutes} minutes)"
+        if self.filterTrigger == True:
+            return None
+        else: 
+            return f"(transfer time: {hours} hours and {minutes} minutes)"
+    
+        
+    def selection(self, client: Client):
+        results = self.search_results if len(self.search_results) > 0 else (self.search_results_one_stop if len(self.search_results_one_stop) > 0 else self.search_results_two_stops)
+        if len(results) == 0:
+            print("\nNo connection found. Please search for connections before booking.\n")
+            return
+        
+        connection_input = None
+        class_input = None
+        while True:
+            try:
+                connection_input = int(input("\nEnter your preferred connection's index: "))
+                class_input = int(input("\nEnter 1 for first-class travel, 2 for second-class: "))
+
+                if connection_input < 1 or connection_input > len(results):
+                    print("Please select a connection from the search results' indexes.")
+                elif class_input not in [1, 2]:
+                    print("Please select from first-class (1) or second-class (2).")
+                else:
+                    break
+            except:
+                print("\nPlease input numerical values only.\n")
+
+        travel_date = self.select_date()
+        
+        tripID = random.randrange(100000, 1000000)
+        counter_people = 1
+        travelling_class  = "first-class" if class_input == 1 else "second-class"
+        trip = Trip(tripID, "single", travelling_class, client.client_id, travel_date, self.compute_connection_cost(connection_input - 1, class_input))
+        ticket = Ticket(None, results[connection_input - 1], self.compute_connection_cost(connection_input - 1, class_input), None, client.first_name)
+        trip.add_ticket(ticket)
+        self.db.insert_ticket(ticket, trip)
+
+        
+
+        while True:
+            carry_on = input("\nTrip created. Do you wish to add another member to trip (y/n): ")
+
+            if carry_on.lower() not in ["y", "n"]:
+                print("\nPlease select from options y/n\n")
+                continue
+            elif carry_on.lower() == "n":
+                print("\nTrip stored. Going back to main menu...\n")
+                break
+            
+            counter_people += 1
+            assigned_name = input("\nEnter the new member's first name: ")
+            new_ticket = ticket = Ticket(None, results[connection_input - 1], self.compute_connection_cost(connection_input - 1, class_input), None, assigned_name)
+            trip.add_ticket(new_ticket)
+            self.db.insert_ticket(new_ticket, trip)
+            trip.set_trip_type("group")
+            trip.set_total_cost(counter_people)
+
+        self.db.insert_trip(trip)
+
+    def compute_connection_cost(self, connection_index, class_input):
+        total = 0
+        
+        if(len(self.search_results) != 0):
+            result = self.search_results[connection_index]
+            
+            if(class_input == 1):
+                total = result.first_class_rate
+            elif (class_input == 2):
+                total = result.second_class_rate
+
+        elif(len(self.search_results_one_stop) != 0):
+            resultOneSum = self.search_results_one_stop[connection_index]
+            route1 = resultOneSum.get("initial")
+            route2 = resultOneSum.get("final")
+            if(class_input == 1):
+                total = float(route1.first_class_rate) + float(route2.first_class_rate)
+            elif (class_input == 2):
+                total = float(route1.second_class_rate) + float(route2.second_class_rate)
+
+        elif(len(self.search_results_two_stops) != 0):
+            resultTwoStops = self.search_results_two_stops[connection_index]
+
+            route1 = resultTwoStops.get("initial")
+            route2 = resultTwoStops.get("middle")
+            route3= resultTwoStops.get("final")
+
+            if(class_input == 1):
+                total = float(route1.first_class_rate) + float(route2.first_class_rate) + float(route3.first_class_rate)
+            elif (class_input == 2):
+                total = float(route1.second_class_rate) + float(route2.second_class_rate) + float(route3.second_class_rate)
+
+        return total
+    
+    def select_date(self):
+        while True:
+            try:
+                year = int(input("\nSelect travel year (2025 - 2026): "))
+                month = int(input("\nSelect travel month (1 - 12): "))
+                max_day = 28
+                if month in [1, 3, 5, 7, 8, 10, 12]:
+                    max_day = 31
+                elif month in [4, 6, 9, 11]:
+                    max_day = 30
+                day = int(input(f"\nSelect travel day (1 - {max_day}): "))
+
+                if year not in range(2025, 2027):
+                    print("\nYear is out of range; please select a date from this year or next year.")
+                elif month not in range(1, 13):
+                    print("\nMonth out or range; please select a month from 1 to 12, inclusively.")
+                elif day not in range(1, (max_day + 1)):
+                    print("\nDay out of range, please try again.")
+                else:
+                    travel_date = date(year, month, day)
+                    today = date.today()
+
+                    if today > travel_date:
+                        print("\nYou are not allowed to travel in the past; please try again.")
+                        continue
+
+                    return travel_date
+            except:
+                print("\nPlease input numerical values only.")
+    
+
+    def filterPolicy(self, minutes, hours, arrivalTime): #If policy is not met, filterTrigger is set to True, which prevents the connection from printing in print_self() function
+
+        self.filterTrigger = False #No filter triggered at first
+        if int(arrivalTime[0]) < 17 and int(arrivalTime[0]) >= 9: #Defining hours as 9-5 and after hours as anything outside it
+            if hours >= 2: # If layover takes more than 2h
+                self.filterTrigger = True
+        if int(arrivalTime[0]) >= 17 and int(arrivalTime[0]) < 9:
+            if hours > 0 or (hours == 0 and minutes > 30): #If more than one hour or 0 hours and more than 30 minutes
+                self.filterTrigger = True
+
+
+
+
+
+
+        
+
+            
