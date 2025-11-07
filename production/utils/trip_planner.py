@@ -428,11 +428,13 @@ class Trip_planner:
 
         if int(endTime[0]) < 17 and int(endTime[0]) >= 9: #Defining hours as 9-5 and after hours as anything outside it
             if hours > 2 and minutes > 0: # If layover takes between 0:00 and 1:59
-                self.filterTrigger == True
-        if int(endTime[0]) >= 5 and int(endTime[0] < 9):
+                self.filterTrigger = True
+        if int(endTime[0]) >= 5 and int(endTime[0]) < 9:
             if hours > 0 or (hours == 0 and minutes > 30): #If more than one hour or 0 hours and more than 30 minutes
-                self.filterTrigger == True
-                    
+                self.filterTrigger = True
+
+
+
 
 
 
