@@ -294,7 +294,7 @@ class Trip_planner:
             hours = hours - 1
             minutes = 60 + minutes
         
-        self.filterPolicy(minutes, hours, end_time_values)
+        self.filterPolicy(minutes, hours, start_time_values)
 
         if self.filterTrigger == True:
             return None
@@ -421,15 +421,13 @@ class Trip_planner:
                 print("\nPlease input numerical values only.")
     
 
-    def filterPolicy(self, minutes, hours, endTime): #If policy is not met, filterTrigger is set to True, which prevents the connection from printing in print_self() function
+    def filterPolicy(self, minutes, hours, arrivalTime): #If policy is not met, filterTrigger is set to True, which prevents the connection from printing in print_self() function
 
         self.filterTrigger = False #No filter triggered at first
-
-
-        if int(endTime[0]) < 17 and int(endTime[0]) >= 9: #Defining hours as 9-5 and after hours as anything outside it
-            if hours > 2 and minutes > 0: # If layover takes between 0:00 and 1:59
+        if int(arrivalTime[0]) < 17 and int(arrivalTime[0]) >= 9: #Defining hours as 9-5 and after hours as anything outside it
+            if hours >= 2: # If layover takes more than 2h
                 self.filterTrigger = True
-        if int(endTime[0]) >= 5 and int(endTime[0]) < 9:
+        if int(arrivalTime[0]) >= 17 and int(arrivalTime[0]) < 9:
             if hours > 0 or (hours == 0 and minutes > 30): #If more than one hour or 0 hours and more than 30 minutes
                 self.filterTrigger = True
 
