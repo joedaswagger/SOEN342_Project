@@ -137,7 +137,8 @@ class Trip_planner:
                                     print("\nPlease enter a value from 1 to 7\n")
                                 else:
                                     for route in self.routes:
-                                        if route.days_of_operation == days_of_operation[day_seletion - 1]:
+                                        route_operation_days = self.parse_days(route)
+                                        if days_of_operation[day_seletion - 1] in route_operation_days:
                                             self.search_results.append(route)
                                     break
 
@@ -430,6 +431,29 @@ class Trip_planner:
         if int(arrivalTime[0]) >= 17 and int(arrivalTime[0]) < 9:
             if hours > 0 or (hours == 0 and minutes > 30): #If more than one hour or 0 hours and more than 30 minutes
                 self.filterTrigger = True
+
+    def parse_days(self, route):
+        days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        route_days = route.days_of_operation
+
+        if "," in route_days:
+            return route_days.split(",")
+        elif "-" in route_days:
+            [start, end] = route_days.split("-")
+            start_index = days.index(start)
+            end_index = days.index(end)
+
+            if start_index == -1 or end_index == -1:
+                return []
+            
+            if start_index < end_index:
+                return days[start_index:end_index + 1]
+            else:
+                return days[start_index:] + days[:end_index + 1]
+        elif "Daily" == route_days:
+            return days
+        else:
+            return [route_days]
 
 
 
